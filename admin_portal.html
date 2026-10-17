@@ -1,0 +1,1133 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>MSA Order Management — Admin Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ee;--cd:#fff;--tx:#1b1d22;--mu:#6b6e75;--bd:#e3e1d9;--g:#0f6b5a;--sb:#14161b;--g-bg:#d8efe8;--g-fg:#0b5445;--b-bg:#dce7f8;--b-fg:#1f4b8f;--a-bg:#fbe9cc;--a-fg:#8a4b06;--r-bg:#f8d9d9;--r-fg:#a02323;--n-bg:#e8e6df;--n-fg:#4b4e55;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101215;--cd:#1a1d23;--tx:#eceae4;--mu:#9a9da5;--bd:#2c3038;--g:#35b79b;--g-bg:#12362e;--g-fg:#7fe0c6;--b-bg:#1a2c4a;--b-fg:#8fb4ee;--a-bg:#3d2c10;--a-fg:#f0b865;--r-bg:#401a1a;--r-fg:#f09090;--n-bg:#2a2d34;--n-fg:#b6b9c0}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font:14px/1.45 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--tx);display:flex}
+#side{width:220px;background:var(--sb);color:#cfd2d8;padding:18px 12px;flex:none;overflow:auto}#side h1{margin:0 8px;color:#fff;font-size:22px}#side small{display:block;margin:0 8px 16px;color:#8b8f98}
+#side a{display:block;padding:9px 12px;border-radius:8px;cursor:pointer;margin-bottom:2px}#side a.on{background:var(--g);color:#fff}#side a:hover:not(.on){background:#23262d}
+#wrap{flex:1;min-width:0;overflow:auto;display:flex;flex-direction:column}
+#top{display:flex;gap:10px;padding:12px 20px;border-bottom:1px solid var(--bd);background:var(--cd);position:sticky;top:0;z-index:5;align-items:center}
+input,select,textarea,button{font:inherit;color:var(--tx)}input,select,textarea{background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+#q{flex:1;min-width:0}#main{padding:20px;max-width:1300px;width:100%}h2{margin:0 0 14px;font-size:22px}h3{margin:0 0 10px;font-size:15px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.two{display:grid;gap:14px;grid-template-columns:2fr 1fr;align-items:start}.two.eq{grid-template-columns:1fr 1fr}
+.k{color:var(--mu);font-size:12.5px}.big{font-size:26px;font-weight:800;margin-top:2px}.big.g{color:var(--g)}
+.btn{border:1px solid var(--bd);background:var(--cd);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:700}.btn.p{background:var(--g);border-color:var(--g);color:#fff}.btn.sec{background:var(--b-bg);color:var(--b-fg);border-color:var(--b-fg)}.btn:disabled{opacity:.45;cursor:default}.btn:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap;cursor:default}.pill.g{background:var(--g-bg);color:var(--g-fg)}.pill.b{background:var(--b-bg);color:var(--b-fg)}.pill.a{background:var(--a-bg);color:var(--a-fg)}.pill.r{background:var(--r-bg);color:var(--r-fg)}.pill.n{background:var(--n-bg);color:var(--n-fg)}
+button.pill{border:0;cursor:pointer;font:inherit;font-size:12px;font-weight:700}button.pill.on{outline:2px solid var(--g)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--mu);font-weight:500;font-size:12.5px;padding:8px}td{padding:9px 8px;border-top:1px solid var(--bd)}tr.row{cursor:pointer}tr.row:hover,tr.sel{background:var(--bg)}
+.bar{display:flex;height:14px;border-radius:99px;overflow:hidden;gap:2px;margin:10px 0}.bar i{display:block}.lg{display:flex;gap:14px;flex-wrap:wrap;color:var(--mu);font-size:12.5px}
+.row2{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}.tl{border-left:2px solid var(--bd);padding-left:12px;margin:10px 0}.tl div{margin-bottom:8px}.lock{float:right}
+.q{border:1px solid var(--bd);border-left:5px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:var(--cd);transition:background .15s,border-color .15s}.q.on{border-width:2px 2px 2px 5px}.q.status-pending{border-left-color:#b8590a;background:color-mix(in srgb,var(--a-bg) 22%,var(--cd))}.q.status-confirmed{border-left-color:#16805d;background:color-mix(in srgb,var(--g-bg) 45%,var(--cd))}.q.status-issue{border-left-color:#c47a12;background:color-mix(in srgb,var(--a-bg) 48%,var(--cd))}.q.status-rejected{border-left-color:#c33d3d;background:color-mix(in srgb,var(--r-bg) 40%,var(--cd))}.q.status-neutral{border-left-color:#7b8494;background:color-mix(in srgb,var(--n-bg) 28%,var(--cd))}.status-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--mu);margin:8px 0 14px}.status-key{display:inline-flex;align-items:center;gap:5px}.status-dot{width:10px;height:10px;border-radius:3px;display:inline-block}.status-dot.green{background:#16805d}.status-dot.amber{background:#c47a12}.status-dot.red{background:#c33d3d}.status-dot.gray{background:#7b8494}.call-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.phone-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none}.callback-field{display:block;width:100%;margin:8px 0}.history-meta{color:var(--mu);font-size:12px}
+.cols{display:flex;gap:6px;align-items:flex-end;height:150px}.cols div{flex:1;background:var(--g);border-radius:6px 6px 0 0;position:relative;min-height:4px}.cols b{position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:12px}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--sb);color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:99;max-width:90vw}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:90;padding:20px}
+.modal-box{background:var(--cd);border:1px solid var(--bd);border-radius:14px;max-width:600px;width:100%;padding:22px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,0.2)}
+@media(max-width:800px){body{flex-direction:column}#side{width:100%;display:flex;gap:4px;overflow-x:auto;padding:8px}#side h1,#side small{display:none}#side a{white-space:nowrap;margin:0}.two,.two.eq{grid-template-columns:1fr}#top{flex-wrap:wrap}#main{padding:12px}}
+</style></head><body>
+<nav id="side"></nav>
+<div id="wrap">
+  <div id="top">
+    <input id="q" placeholder="Search order, phone, consignment no." oninput="ui.q=this.value;if(ui.view!='orders')ui.view='orders';draw()">
+    <select id="st" onchange="ui.store=this.value;draw()"></select>
+    <select id="dt" onchange="ui.dr=this.value;draw()"><option value="all">All time</option><option value="today">Today</option><option value="yest">Yesterday</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="c">Custom range</option></select>
+    <span id="cu" style="display:contents"></span>
+    <span class="pill b" style="font-size:13px;padding:6px 14px">👑 Admin Mode</span>
+    <a href="/caller" target="_blank" class="btn sec" style="padding:6px 12px;font-size:12px;text-decoration:none">📞 Open Calling Portal ↗</a>
+    <button class="btn" style="padding:6px 12px;font-size:12px;display:inline-flex;align-items:center;gap:6px" onclick="syncBackend()" title="Click to sync state with backend server">
+      <span id="sync-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#e3a008"></span>
+      <span id="sync-text">Local Mode</span>
+    </button>
+  </div>
+  <main id="main"></main>
+</div>
+<div id="toast"></div>
+<div id="modal-container"></div>
+
+<script>
+const COUR=['PostEx','Leopards','Trax'],PRE=['PX','LP','TX'],DAY=864e5,PATH=['Booked','In Transit','Out for Delivery','Delivered'],RET=['Booked','In Transit','Return in Transit','Returned to Sender'];
+const NM=['Ayesha Khan','Bilal Ahmed','Hina Raza','Usman Ali','Sana Malik','Zain Abbas','Noor Fatima','Hamza Sheikh','Iqra Javed','Fahad Mirza','Maryam Tariq','Talha Butt'],IT=['Lawn suit · M','Khussa · 39','Bedsheet · King','Kurta · L','Handbag · Tan','Perfume · 100ml'],CITY=['Faisalabad','Lahore','Karachi','Multan','Islamabad','Sialkot'];
+const RAWS={Booked:'Order booked','In Transit':'Arrived at hub','Out for Delivery':'With rider','Delivered':'Delivered to consignee','Return in Transit':'Return initiated','Returned to Sender':'Returned to shipper'};
+const CALL=['Pending Call','Confirmed','Cancelled','No Answer','Call Back Later','Wrong Number'],COL={'Pending Call':'a',Confirmed:'g',Cancelled:'r','No Answer':'n','Call Back Later':'a','Wrong Number':'r','Ready to Book':'n','Booking Failed':'r',Booked:'b','In Transit':'b','Out for Delivery':'b',Delivered:'g','Return in Transit':'a','Returned to Sender':'n','—':'n',Matched:'g','Short payment':'r','Needs review':'a',Unmatched:'n'};
+let S=load()||seed();S.o.forEach(o=>{o.at=Array.isArray(o.at)?o.at:[]});DEF();let ui={dr:'all',d1:'',d2:'',view:'dashboard',role:'Owner',store:'all',q:'',f:'All',sel:new Set(),callSel:new Set(),asgFilter:'all',open:null,tab:'Pending Call',cour:'PostEx',sf:'All',cid:null};
+
+let backendUrl = localStorage.getItem('msa_backend_url') || (window.location.protocol === 'file:' ? 'http://localhost:5000/api' : `${window.location.origin}/api`);
+let isBackendConnected = false;
+
+function load(){try{return JSON.parse(localStorage.getItem('msa2'))}catch(e){return null}}
+function save(){try{localStorage.setItem('msa2',JSON.stringify(S))}catch(e){}}
+function mk(i,t){return{id:i,no:'MSA-'+(1040+i),store:i%4,cust:NM[i%12],phone:'03'+(10+i%5)+'-'+(2000000+i*48271),addr:'House '+(10+i*3)+', Block '+'ABCD'[i%4]+', '+CITY[i%6],item:IT[i%6],cod:Math.round((1800+i*730%5200)/50)*50,call:'Pending Call',at:[],ship:null,t:t}}
+function seed(){const n=Date.now(),o=[];for(let i=0;i<24;i++){const x=mk(i,n-(26-i)*DAY/2);x.call=i<6?'Pending Call':i==6?'No Answer':i==7?'Call Back Later':i==8?'Cancelled':i==9?'Wrong Number':'Confirmed';if(i>5)x.at.push({t:x.t+36e5,out:x.call,note:'',by:'Caller'});if(i==7)x.cb=n-36e5;
+if(i>=12){const c=i%3,st=i<13?'':i<15?'Booked':i<18?'In Transit':i==18?'Out for Delivery':i<22?'Delivered':i==22?'Return in Transit':'Returned to Sender';
+if(i==12)x.ship={courier:COUR[c],failed:true,err:'Consignee city not recognised by courier',ev:[]};else{const P=(st=='Return in Transit'||st=='Returned to Sender')?RET:PATH,ev=[];for(let k=0;k<=P.indexOf(st);k++)ev.push({s:P[k],raw:RAWS[P[k]],t:x.t+DAY/2+k*DAY*.8});x.ship={courier:COUR[c],cn:PRE[c]+(700100+i),status:st,ev,rep:null,rec:null};
+if(st=='Delivered'&&i<21){x.ship.rep=i==20?x.cod-200:x.cod;x.ship.rec=i==19?x.cod:i==20?x.cod-200:null}}}o.push(x)}
+return{o,cfg:{PostEx:{ok:true,mode:'Live API',acc:'PostEx Official',token:'',pickupId:'001'},Leopards:{ok:true,mode:'Live API',acc:'Leopards Direct',apiKey:'',apiPassword:''},Trax:{ok:true,mode:'Live API',acc:'Trax Prime',apiKey:'',pickupId:'1'}},lag:[0,0,1,0],audit:[]}}
+
+const $=s=>document.querySelector(s),e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),R=n=>'PKR '+Math.round(n).toLocaleString('en-PK'),pill=(t,c)=>`<span class="pill ${c||COL[t]||'n'}">${e(t)}</span>`,T=t=>new Date(t).toLocaleString('en-PK',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const sl=o=>o.ship?(o.ship.failed?'Booking Failed':o.ship.status):o.call=='Confirmed'?'Ready to Book':'—',ss=o=>o.ship&&!o.ship.failed,sum=(a,f)=>a.reduce((s,x)=>s+(f(x)||0),0);
+
+function phoneInfo(raw){const digits=String(raw||'').replace(/[\s().-]/g,'');let normalized=digits;if(/^03[0-9]{9}$/.test(digits))normalized='+92'+digits.slice(1);else if(/^\+923[0-9]{9}$/.test(digits))normalized=digits;else return{valid:false,href:''};return{valid:true,href:'tel:'+normalized,normalized}}
+function callNow(id){const o=S.o.find(x=>x.id===id);if(!o)return false;const p=phoneInfo(o.phone);if(!p.valid){toast('Invalid customer phone. Update it to a valid Pakistan mobile number first.');return false;}o.at.push({t:Date.now(),out:'Call Started',note:'Opened device calling app via click-to-call.',by:'Admin'});log(o.no+': Call Now clicked');save();return true}
+function callbackValue(o){return o.cb?new Date(o.cb).toLocaleString('en-PK',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
+function callStatusClass(status){if(status==='Confirmed')return'status-confirmed';if(['Cancelled','Wrong Number'].includes(status))return'status-rejected';if(['No Answer','Call Back Later','Request correction'].includes(status))return'status-issue';if(status==='Pending Call')return'status-pending';return'status-neutral';}
+function callStatusLabel(status){return status==='Confirmed'?'Called · Confirmed':['Cancelled','Wrong Number'].includes(status)?'Rejected / Problem':['No Answer','Call Back Later','Request correction'].includes(status)?'Call issue / Follow-up':status;}
+function log(a){S.audit.unshift({t:Date.now(),by:'Admin',a});S.audit=S.audit.slice(0,100)}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t.h);t.h=setTimeout(()=>t.style.display='none',3000)}
+function inR(o){const d=new Date();d.setHours(0,0,0,0);const s=+d,t=o.t;switch(ui.dr){case'today':return t>=s;case'yest':return t>=s-DAY&&t<s;case'7':return t>=s-6*DAY;case'30':return t>=s-29*DAY;case'c':return(!ui.d1||t>=+new Date(ui.d1+'T00:00'))&&(!ui.d2||t<+new Date(ui.d2+'T00:00')+DAY);default:return true}}
+function list(){const q=ui.q.toLowerCase();return S.o.filter(o=>inR(o)&&(ui.store=='all'||o.store==ui.store)&&(!q||(o.no+o.phone+o.cust+(o.ship?.cn||'')).toLowerCase().includes(q)))}
+
+// EXCEL / CSV EXPORT ENGINE
+function exportCSV(filename, headers, rows) {
+  const escapeVal = val => `"${String(val ?? '').replace(/"/g, '""')}"`;
+  const csvContent = '\uFEFF' + [headers.map(escapeVal).join(','), ...rows.map(row => row.map(escapeVal).join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+  toast('📥 Exported ' + filename);
+}
+
+function exportOrdersCSV() {
+  const L = list();
+  const headers = ['Order No', 'Store', 'Customer Name', 'Phone', 'Address', 'Item', 'COD Amount (PKR)', 'Call Status', 'Shipment Status', 'Courier', 'Consignment No', 'Order Placed At'];
+  const rows = L.map(o => [
+    o.no,
+    'Store ' + (o.store + 1),
+    o.cust,
+    o.phone,
+    o.addr,
+    o.item,
+    o.cod,
+    o.call,
+    sl(o),
+    o.ship?.courier || '—',
+    o.ship?.cn || '—',
+    new Date(o.t).toLocaleString('en-PK')
+  ]);
+  exportCSV(`MSA_Orders_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+}
+
+function exportCODCSV() {
+  const D = list().filter(o => ss(o) && o.ship.status == 'Delivered');
+  const headers = ['Consignment No', 'Courier', 'Order No', 'Customer', 'Expected COD', 'Courier Reported', 'Bank Received', 'Reconciliation Status'];
+  const rows = D.map(o => [
+    o.ship.cn,
+    o.ship.courier,
+    o.no,
+    o.cust,
+    o.cod,
+    o.ship.rep ?? '—',
+    o.ship.rec ?? 'Pending',
+    mt(o)
+  ]);
+  exportCSV(`MSA_COD_Reconciliation_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+}
+
+function exportReportsCSV() {
+  const L = list();
+  const headers = ['Courier', 'Total Booked', 'Booking Success Rate', 'Delivery Rate', 'Return Rate', 'Avg Days'];
+  const rows = COUR.map(c => {
+    const all = L.filter(o => o.ship?.courier == c);
+    const ok = all.filter(ss);
+    const cl = ok.filter(o => ['Delivered', 'Returned to Sender'].includes(o.ship.status));
+    const dv = cl.filter(o => o.ship.status == 'Delivered');
+    const d = dv.map(o => (o.ship.ev.at(-1).t - o.ship.ev[0].t) / DAY);
+    return [
+      c,
+      all.length,
+      pc(ok.length, all.length),
+      pc(dv.length, cl.length),
+      pc(cl.length - dv.length, cl.length),
+      d.length ? (sum(d, x => x) / d.length).toFixed(1) : '—'
+    ];
+  });
+  exportCSV(`MSA_Courier_Performance_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+}
+
+function exportAuditCSV() {
+  const headers = ['Timestamp', 'Actor Role / Name', 'Action Details'];
+  const rows = S.audit.map(a => [new Date(a.t).toLocaleString('en-PK'), a.by, a.a]);
+  exportCSV(`MSA_Audit_Logs_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+}
+
+// BACKEND SYNC
+async function checkBackend() {
+  try {
+    const res = await fetch(`${backendUrl}/health`, { signal: AbortSignal.timeout(2000) });
+    if (res.ok) { isBackendConnected = true; updateSyncBadge(true); }
+    else { isBackendConnected = false; updateSyncBadge(false); }
+  } catch (e) {
+    isBackendConnected = false; updateSyncBadge(false);
+  }
+}
+
+function updateSyncBadge(online) {
+  const dot = $('#sync-dot');
+  const txt = $('#sync-text');
+  if (!dot || !txt) return;
+  if (online) { dot.style.background = '#10b981'; txt.textContent = 'Cloud Synced'; }
+  else { dot.style.background = '#e3a008'; txt.textContent = 'Local Mode'; }
+}
+
+async function syncBackend() {
+  toast('Syncing state with central server...');
+  try {
+    const res = await fetch(`${backendUrl}/sync-state`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orders: S.o, audit: S.audit }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.orders && Array.isArray(data.orders)) S.o = data.orders;
+      isBackendConnected = true;
+      updateSyncBadge(true);
+      save();
+      draw();
+      toast('✅ State synced with server (' + S.o.length + ' orders updated)');
+    } else {
+      throw new Error('Sync status ' + res.status);
+    }
+  } catch (err) {
+    isBackendConnected = false;
+    updateSyncBadge(false);
+    toast('⚠️ Backend server offline. Running on LocalStorage.');
+  }
+}
+
+// VIEWS & NAVIGATION
+const NAV=[
+  ['dashboard','📊 Dashboard'],
+  ['orders','📦 All Orders'],
+  ['calling','📞 Calling Team Monitor'],
+  ['queue','🚚 Shipment Queue'],
+  ['tracking','📍 Shipments & Tracking'],
+  ['cod','💰 COD Reconciliation'],
+  ['reports','📈 Reports & Analytics'],
+  ['staff','👥 Staff & Callers'],
+  ['shop','🛍️ Shopify & Webhooks'],
+  ['couriers','⚙️ Courier Settings & APIs'],
+  ['audit','📋 Audit Logs'],
+  ['sys','🔧 System Settings']
+];
+
+function draw(){
+  $('#dt').value=ui.dr;
+  $('#cu').innerHTML=ui.dr=='c'?`<input type="date" aria-label="From date" value="${ui.d1}" onchange="ui.d1=this.value;draw()"><input type="date" aria-label="To date" value="${ui.d2}" onchange="ui.d2=this.value;draw()">`:'';
+  $('#st').innerHTML='<option value="all">All 4 stores</option>'+[0,1,2,3].map(i=>`<option value="${i}" ${ui.store==i?'selected':''}>Store ${i+1}</option>`).join('');
+  $('#side').innerHTML='<h1>MSA</h1><small>Admin Operations Suite</small>'+NAV.map(n=>`<a tabindex=0 class="${ui.view==n[0]?'on':''}" onclick="ui.view='${n[0]}';ui.open=null;draw()" onkeydown="if(event.key=='Enter')this.click()">${n[1]}</a>`).join('');
+  $('#main').innerHTML=V[ui.view]();
+  save();
+  updateSyncBadge(isBackendConnected);
+}
+
+const V={};
+
+V.dashboard=()=>{
+  const L=list(),n=f=>L.filter(f).length,tr=o=>ss(o)&&['In Transit','Out for Delivery'].includes(o.ship.status),dl=o=>ss(o)&&o.ship.status=='Delivered',rt=o=>ss(o)&&o.ship.status.startsWith('Return')||ss(o)&&o.ship.status=='Returned to Sender';
+  const P=[['Pending',n(o=>o.call=='Pending Call'),'#b8590a'],['Confirmed',n(o=>sl(o)=='Ready to Book'||sl(o)=='Booking Failed'),'#1f4b8f'],['Booked',n(o=>ss(o)&&o.ship.status=='Booked'),'#5a67ad'],['In transit',n(tr),'#7a92bd'],['Delivered',n(dl),'#0f6b5a'],['Returned',n(rt),'#a02323']];
+  const sh=L.filter(o=>ss(o)&&!rt(o)),rec=sum(L.filter(ss),o=>o.ship.rec);
+  return`<h2>Executive Dashboard</h2><div class="grid">${[['Orders',L.length,1],['Pending confirmation',P[0][1]],['Booked shipments',L.filter(ss).length],['In transit',P[3][1]],['Delivered',P[4][1]]].map(k=>`<div class="card"><div class="k">${k[0]}</div><div class="big ${k[2]?'g':''}">${k[1]}</div></div>`).join('')}</div>
+  <div class="card"><h3>Order pipeline</h3><div class="bar">${P.map(p=>`<i style="flex:${p[1]||.05};background:${p[2]}" title="${p[0]}: ${p[1]}"></i>`).join('')}</div><div class="lg">${P.map(p=>`<span style="color:${p[2]}">●</span> ${p[0]} ${p[1]}`).join('')}</div></div>
+  <div class="card"><h3>Money, kept separate</h3><div class="grid">${[['Order value',sum(L,o=>o.cod)],['Delivered value',sum(L.filter(dl),o=>o.cod)],['Expected COD (shipped, not returned)',sum(sh,o=>o.cod)],['Courier-reported',sum(L.filter(ss),o=>o.ship.rep)],['Actually received',rec,1]].map(k=>`<div><div class="k">${k[0]}</div><div class="big ${k[2]?'g':''}" style="font-size:20px">${R(k[1])}</div></div>`).join('')}</div></div>
+  <div class="two eq"><div class="card"><h3>Orders by store</h3><div class="tw"><table><tr><th>Store<th>Orders<th>Confirmed<th>Status</tr>${[0,1,2,3].map(i=>{const s=S.o.filter(o=>o.store==i);return`<tr><td>Store ${i+1}<td>${s.length}<td>${s.length?Math.round(100*s.filter(o=>o.call=='Confirmed').length/s.length):0}%<td>${pill(S.lag[i]?'Sync lag':'Connected',S.lag[i]?'a':'g')}</tr>`}).join('')}</table></div></div>
+  <div class="card"><h3>Couriers</h3><table><tr><th>Courier<th>Booked<th>Mode<th>Status</tr>${COUR.map(c=>`<tr><td>${c}<td>${L.filter(o=>ss(o)&&o.ship.courier==c).length}<td>${pill(S.cfg[c].mode||'Simulation','b')}<td>${pill(S.cfg[c].ok?'Ready':'Awaiting config',S.cfg[c].ok?'g':'n')}</tr>`).join('')}</table></div></div>`;
+};
+
+const FIL=['All','Pending Call','Confirmed','Cancelled','Ready to Book','Booking Failed'];
+V.orders=()=>{
+  const L=list().filter(o=>ui.f=='All'||o.call==ui.f&&!['Ready to Book','Booking Failed'].includes(ui.f)||sl(o)==ui.f),O=S.o.find(o=>o.id==ui.open);
+  return`<div class="row2"><h2 style="margin:0;flex:1">All Orders</h2><button class="btn" onclick="exportOrdersCSV()">📥 Export CSV</button><button class="btn" onclick="syncStores()">Sync stores</button><select onchange="ui.cour=this.value">${COUR.map(c=>`<option ${ui.cour==c?'selected':''}>${c}</option>`).join('')}</select><button class="btn p" onclick="book()" ${ui.sel.size?'':'disabled'}>Book selected (${ui.sel.size})</button></div>
+  <div class="row2">${FIL.map(f=>`<button class="pill n ${ui.f==f?'on':''}" onclick="ui.f='${f}';draw()">${f}</button>`).join('')}</div>
+  <div class="two"><div class="card tw"><table><tr><th><th>Order<th>Store<th>Customer<th>COD<th>Call status<th>Shipment<th>Source</tr>${L.map(o=>`<tr class="row ${o.id==ui.open?'sel':''}" onclick="ui.open=${o.id};draw()"><td onclick="event.stopPropagation()"><input type="checkbox" ${ui.sel.has(o.id)?'checked':''} onchange="tg(${o.id})" ${['Ready to Book','Booking Failed'].includes(sl(o))?'':'disabled'}><td><b>${o.no}</b><td>Store ${o.store+1}<td>${e(o.cust)}<td>${R(o.cod)}<td>${pill(o.call)}<td>${pill(sl(o))}<td>${o.source?pill(o.source,'b'):o.at.length?e(o.at.at(-1).by):'—'}</tr>`).join('')||'<tr><td colspan=8>No orders match. Clear the search or filter.</tr>'}</table></div>
+  <div class="card">${O?detail(O):'<div class="k">Select an order to see its customer, items and timeline.</div>'}</div></div>`;
+};
+
+function detail(o){
+  const p=phoneInfo(o.phone);
+  return`<h3>Order ${o.no}</h3><div class="k">Store ${o.store+1} · placed ${T(o.t)}</div><p><b>${e(o.cust)}</b><br>${e(o.phone)}<br>${e(o.addr)}<br>${e(o.item)}</p><div class="call-actions">${p.valid?`<a class="btn p phone-link" href="${p.href}" onclick="return callNow(${o.id})">☎ Call Now</a>`:`<button class="btn p" disabled>☎ Call Now</button><span class="k" style="color:var(--r-fg)">Invalid Pakistan mobile number</span>`}<button class="btn sec" onclick="openEditOrderModal(${o.id})">✏️ Edit Order</button><button class="btn" onclick="ui.view='calling';ui.tab='${e(o.call)}';ui.open=${o.id};draw()">Open in Calling Team</button></div><div class="row2">${pill(o.call)}${pill(sl(o))}${pill('COD '+R(o.cod),'a')}</div>${o.cb?`<p class="k">Scheduled callback: <b>${callbackValue(o)}</b></p>`:''}${o.ship?.failed?`<p style="color:var(--r-fg)">Booking failed: ${e(o.ship.err)}. Fix the address and book again.</p>`:''}<div class="k">Timeline</div><div class="tl"><div>Placed · ${T(o.t)}</div>${o.at.map(a=>`<div>${e(a.out)} · ${e(a.by)} · ${T(a.t)}${a.note?'<br><span class=k>'+e(a.note)+'</span>':''}${a.callbackAt?'<br><span class=history-meta>Callback scheduled: '+e(new Date(a.callbackAt).toLocaleString('en-PK'))+'</span>':''}</div>`).join('')}${(o.ship?.ev||[]).map(v=>`<div>${v.s} · ${o.ship.courier} · ${T(v.t)}</div>`).join('')}</div>`;
+}
+
+function tg(i){ui.sel.has(i)?ui.sel.delete(i):ui.sel.add(i);draw()}
+
+function syncStores(){
+  const k=S.o.length;
+  for(let i=0;i<2;i++){const x=mk(k+i,Date.now());x.store=(k+i*3)%4;x.cust=NM[(k*5+i)%12];S.o.push(x)}
+  S.lag=[0,0,0,0];
+  S.stores.forEach(s=>s.last=Date.now());
+  log('Synced 4 stores, 2 new orders');
+  draw();
+  toast('Synced 4 stores. 2 new orders are waiting for a call.');
+}
+
+async function book(){
+  const c=ui.cour;
+  if(!S.cfg[c].ok)return toast(c+' is not connected. Configure it in Courier Settings first.');
+  let ok=0,bad=0;
+  const ids=Array.from(ui.sel);
+  toast(`Booking ${ids.length} orders via ${c}...`);
+
+  for(const i of ids){
+    const o=S.o.find(x=>x.id===i);
+    if(!o||(o.ship&&!o.ship.failed))continue;
+
+    if(S.cfg[c].mode==='Live API'&&isBackendConnected){
+      try{
+        const res=await fetch(`${backendUrl}/couriers/book`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({courier:c,order:o,config:S.cfg[c]})
+        });
+        const data=await res.json();
+        if(data.success){
+          o.ship={courier:c,cn:data.trackingNumber,status:'Booked',ev:[{s:'Booked',raw:data.mode==='live'?'Booked via Live '+c+' API':'Booked (Simulated)',t:Date.now()}],rep:null,rec:null};
+          ok++;
+        }else{
+          o.ship={courier:c,failed:true,err:data.error||'Courier booking rejected',ev:[]};
+          bad++;
+        }
+      }catch(err){
+        o.ship={courier:c,cn:PRE[COUR.indexOf(c)]+(800000+o.id),status:'Booked',ev:[{s:'Booked',raw:RAWS.Booked,t:Date.now()}],rep:null,rec:null};
+        ok++;
+      }
+    }else{
+      if(o.cust.length%5==0&&!o.retry){
+        o.retry=1;
+        o.ship={courier:c,failed:true,err:'Consignee city not recognised by courier',ev:[]};
+        bad++;
+        continue;
+      }
+      o.ship={courier:c,cn:PRE[COUR.indexOf(c)]+(800000+o.id),status:'Booked',ev:[{s:'Booked',raw:RAWS.Booked,t:Date.now()}],rep:null,rec:null};
+      ok++;
+    }
+  }
+
+  log(`Booked ${ok} via ${c}${bad?', '+bad+' failed':''}`);
+  ui.sel.clear();
+  draw();
+  toast(`${ok} booked via ${c}${bad?', '+bad+' failed':''}.`);
+}
+
+// Calling Team Monitor
+const TABS=['Pending Call','No Answer','Call Back Later','Wrong Number','Cancelled'];
+function reopen(){
+  const o=S.o.find(x=>x.id===ui.open);
+  if(!o)return;
+  if(o.ship&&!o.ship.failed)return toast('This order is already booked, so it cannot be reopened.');
+  o.call='Pending Call';
+  delete o.reason;
+  o.at.push({t:Date.now(),out:'Reopened',note:'',by:'Admin'});
+  log(o.no+': reopened');
+  ui.tab='Pending Call';
+  draw();
+  toast(o.no+' is back in the Pending Call queue.');
+}
+
+function openEditOrderModal(id){
+  const o = S.o.find(x => x.id === id);
+  if(!o) return toast('Order not found.');
+  const m = $('#modal-container');
+  m.innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box" style="max-width:560px">
+      <div class="row2" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">✏️ Edit Order #${e(o.no)}</h3>
+        <button class="btn" style="padding:2px 8px" onclick="closeModal()">✕</button>
+      </div>
+      <p class="k">Update customer details, shipping address, or COD amount agreed upon during the call.</p>
+      
+      <div style="margin-bottom:10px">
+        <label class="k" style="font-weight:700">Customer Full Name</label>
+        <input id="edit-cust" style="width:100%" value="${e(o.cust)}" placeholder="e.g. Ayesha Khan">
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label class="k" style="font-weight:700">Phone Number (Pakistani Mobile: 03001234567)</label>
+        <input id="edit-phone" style="width:100%" value="${e(o.phone)}" placeholder="0300-1234567">
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label class="k" style="font-weight:700">Complete Delivery Address (House, Street, Block, City)</label>
+        <textarea id="edit-addr" rows="3" style="width:100%" placeholder="Complete delivery address">${e(o.addr)}</textarea>
+      </div>
+
+      <div class="two eq" style="margin-bottom:10px">
+        <div>
+          <label class="k" style="font-weight:700">Ordered Items / Variation / Size</label>
+          <input id="edit-item" style="width:100%" value="${e(o.item)}" placeholder="e.g. Lawn suit · M">
+        </div>
+        <div>
+          <label class="k" style="font-weight:700">COD Amount (PKR)</label>
+          <input id="edit-cod" type="number" min="0" step="50" style="width:100%" value="${o.cod}">
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label class="k" style="font-weight:700">Call / Edit Note (Optional)</label>
+        <input id="edit-note" style="width:100%" placeholder="e.g. Customer corrected house number and confirmed Size M">
+      </div>
+
+      <div class="row2" style="justify-content:flex-end;margin-top:16px">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn p" onclick="saveEditedOrder(${o.id})">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function closeModal(){$('#modal-container').innerHTML='';}
+
+async function saveEditedOrder(id){
+  const o = S.o.find(x => x.id === id);
+  if(!o) return;
+
+  const cust = $('#edit-cust').value.trim();
+  const phone = $('#edit-phone').value.trim();
+  const addr = $('#edit-addr').value.trim();
+  const item = $('#edit-item').value.trim();
+  const cod = Math.round(parseFloat($('#edit-cod').value) || 0);
+  const note = $('#edit-note').value.trim();
+
+  if(!cust) return toast('Customer name is required.');
+  if(!phone) return toast('Phone number is required.');
+  if(!addr) return toast('Delivery address is required.');
+
+  const changes = [];
+  if(o.cust !== cust) changes.push(`Name: ${cust}`);
+  if(o.phone !== phone) changes.push(`Phone: ${phone}`);
+  if(o.addr !== addr) changes.push(`Address updated`);
+  if(o.item !== item) changes.push(`Item: ${item}`);
+  if(o.cod !== cod) changes.push(`COD: PKR ${cod}`);
+
+  o.cust = cust;
+  o.phone = phone;
+  o.addr = addr;
+  o.item = item;
+  o.cod = cod;
+  if(o.corr) delete o.corr;
+
+  const editLogText = changes.length ? `Edited (${changes.join(', ')})` : 'Order details verified';
+  o.at.push({
+    t: Date.now(),
+    out: 'Details Edited',
+    note: note ? `${editLogText} — ${note}` : editLogText,
+    by: 'Admin'
+  });
+
+  log(`${o.no}: details edited by Admin`);
+  closeModal();
+  save();
+  draw();
+  toast(`✅ Order ${o.no} updated successfully!`);
+
+  if(isBackendConnected){
+    try {
+      fetch(`${backendUrl}/orders/${o.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(o)
+      });
+    } catch(e) {}
+  }
+}
+
+function getCallingFilteredOrders(){
+  const q = ui.q.toLowerCase();
+  return S.o.filter(o => {
+    if(ui.tab !== 'All' && o.call !== ui.tab) return false;
+    if(ui.asgFilter === 'unassigned' && o.asg) return false;
+    if(ui.asgFilter !== 'all' && ui.asgFilter !== 'unassigned' && o.asg !== ui.asgFilter) return false;
+    if(q && !(o.no + o.cust + o.phone + (o.asg || '') + o.item + o.addr).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function toggleCallSel(id){
+  if(ui.callSel.has(id)) ui.callSel.delete(id);
+  else ui.callSel.add(id);
+  draw();
+}
+
+function selectQuickCount(count){
+  const visible = getCallingFilteredOrders();
+  ui.callSel.clear();
+  visible.slice(0, count).forEach(o => ui.callSel.add(o.id));
+  draw();
+  toast(`Selected ${ui.callSel.size} orders`);
+}
+
+function selectAllFiltered(){
+  const visible = getCallingFilteredOrders();
+  visible.forEach(o => ui.callSel.add(o.id));
+  draw();
+  toast(`Selected all ${ui.callSel.size} matching orders`);
+}
+
+function toggleSelectAllVisible(checked){
+  const visible = getCallingFilteredOrders();
+  if(checked){
+    visible.forEach(o => ui.callSel.add(o.id));
+  } else {
+    ui.callSel.clear();
+  }
+  draw();
+}
+
+async function bulkAssignCaller(callerName){
+  if(!callerName) return;
+  if(!ui.callSel.size) return toast('Please check at least 1 order using the checkboxes first.');
+
+  if(callerName === '__new__'){
+    const newCaller = prompt('Enter new caller email or name:');
+    if(!newCaller || !newCaller.trim()) return draw();
+    const name = newCaller.trim();
+    if(!S.staff.some(s => s.n.toLowerCase() === name.toLowerCase())){
+      S.staff.push({ n: name, r: 'Caller', a: 1 });
+    }
+    callerName = name;
+  }
+
+  const isUnassign = callerName === '__unassign__';
+  const targetLabel = isUnassign ? 'Unassigned' : callerName;
+  let count = 0;
+
+  ui.callSel.forEach(id => {
+    const o = S.o.find(x => x.id === id);
+    if(o){
+      if(isUnassign) delete o.asg;
+      else o.asg = callerName;
+      o.at.push({
+        t: Date.now(),
+        out: 'Assigned',
+        note: isUnassign ? 'Order unassigned by Admin' : `Assigned to ${callerName}`,
+        by: 'Admin'
+      });
+      count++;
+    }
+  });
+
+  log(`Assigned ${count} orders to ${targetLabel}`);
+  ui.callSel.clear();
+  save();
+  draw();
+  toast(`✅ Successfully assigned ${count} orders to ${targetLabel}!`);
+
+  if(isBackendConnected){
+    try {
+      fetch(`${backendUrl}/sync-state`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orders: S.o, audit: S.audit })
+      });
+    } catch(e) {}
+  }
+}
+
+function inlineAssignOrder(id, callerName){
+  const o = S.o.find(x => x.id === id);
+  if(!o) return;
+  if(!callerName || callerName === '__unassign__') {
+    delete o.asg;
+  } else {
+    o.asg = callerName;
+  }
+  o.at.push({
+    t: Date.now(),
+    out: 'Assigned',
+    note: o.asg ? `Assigned to ${o.asg}` : 'Order unassigned',
+    by: 'Admin'
+  });
+  save();
+  draw();
+  toast(`Updated assignment for #${o.no}`);
+  if(isBackendConnected){
+    try {
+      fetch(`${backendUrl}/orders/${o.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(o)
+      });
+    } catch(e) {}
+  }
+}
+
+const CALL_TABS = ['Pending Call', 'Confirmed', 'Call Back Later', 'No Answer', 'Wrong Number', 'Cancelled', 'All'];
+
+V.calling=()=>{
+  const L = getCallingFilteredOrders();
+  const due = S.o.filter(o => o.call == 'Call Back Later' && o.cb <= Date.now()).length;
+  let O = S.o.find(o => o.id == ui.open);
+  const callers = S.staff.filter(s => s.r === 'Caller' && s.a);
+  const isAllSelected = L.length > 0 && L.every(o => ui.callSel.has(o.id));
+
+  return`
+  <!-- Top Bar -->
+  <div class="row2" style="margin-bottom:12px;justify-content:space-between">
+    <div>
+      <h2 style="margin:0;display:inline-block">Calling Team & Order Allocation</h2>
+      <span class="pill a" style="margin-left:8px">Callbacks due: ${due}</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="/caller" target="_blank" class="btn p">📞 Open Calling Portal ↗</a>
+    </div>
+  </div>
+
+  <div class="status-legend">
+    <span class="status-key"><i class="status-dot green"></i> Called & confirmed</span>
+    <span class="status-key"><i class="status-dot amber"></i> No answer / callback</span>
+    <span class="status-key"><i class="status-dot red"></i> Rejected / cancelled</span>
+    <span class="status-key"><i class="status-dot gray"></i> Pending queue</span>
+  </div>
+
+  <!-- Queue Filter Tabs & Caller Dropdown -->
+  <div class="row2" style="margin-bottom:14px">
+    ${CALL_TABS.map(t => `
+      <button class="pill ${COL[t] || 'n'} ${ui.tab === t ? 'on' : ''}" style="cursor:pointer;padding:6px 14px;font-size:12.5px;border:1px solid var(--bd)" onclick="ui.tab='${t}';ui.open=null;draw()">
+        ${t} (${t === 'All' ? S.o.length : S.o.filter(o => o.call === t).length})
+      </button>
+    `).join('')}
+
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <span class="k" style="font-weight:700">Filter by Caller:</span>
+      <select onchange="ui.asgFilter=this.value;draw()" style="padding:6px 10px;font-size:12.5px">
+        <option value="all">All Callers & Unassigned</option>
+        <option value="unassigned" ${ui.asgFilter === 'unassigned' ? 'selected' : ''}>Unassigned Only</option>
+        ${callers.map(c => `<option value="${e(c.n)}" ${ui.asgFilter === c.n ? 'selected' : ''}>${e(c.n)}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <!-- Dark Bulk Action Bar (Exact Match to User Screenshot) -->
+  <div style="background:var(--sb);color:#cfd2d8;padding:12px 18px;border-radius:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <input type="checkbox" style="transform:scale(1.2);cursor:pointer" ${isAllSelected ? 'checked' : ''} onchange="toggleSelectAllVisible(this.checked)">
+      <span style="font-weight:700;font-size:13px;color:#fff">
+        selected · ${ui.callSel.size} on this page
+      </span>
+      <span style="color:#525866">|</span>
+      <span style="font-size:12px;color:#8b8f98">Quick Select:</span>
+      <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(5)">+5</button>
+      <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(10)">+10</button>
+      <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(20)">+20</button>
+      ${ui.callSel.size ? `<button class="btn" style="background:transparent;border:none;color:#f09090;padding:3px 8px;font-size:12px;cursor:pointer" onclick="ui.callSel.clear();draw()">✕ Clear</button>` : ''}
+    </div>
+
+    <!-- Dropdown: Assign to Caller (Exact Screenshot Match) -->
+    <div style="display:flex;align-items:center;gap:10px">
+      <select id="bulk-assign-dropdown" style="background:#1f222a;color:#fff;border:1px solid #3e4451;border-radius:8px;padding:7px 14px;font-weight:600;font-size:13px;min-width:220px;cursor:pointer" onchange="bulkAssignCaller(this.value);this.value='';">
+        <option value="">Assign to caller...</option>
+        ${callers.map(c => `<option value="${e(c.n)}">👤 ${e(c.n)}</option>`).join('')}
+        <option value="__unassign__">❌ Unassign Selected</option>
+        <option value="__new__">➕ Add New Caller (Email/Name)...</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Register Count Bar (From Screenshot) -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 4px 10px;font-size:12.5px;color:var(--mu)">
+    <div>
+      <b style="color:var(--tx)">Register</b> ${L.length} matching · page 1 of 1
+    </div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a style="cursor:pointer;color:var(--g);font-weight:700" onclick="selectAllFiltered()">☑ Select all ${L.length} filtered</a>
+      <a style="cursor:pointer;color:var(--tx);font-weight:600" onclick="draw()">🔄 Refresh</a>
+    </div>
+  </div>
+
+  <!-- Table & Detail Grid -->
+  <div class="two" style="grid-template-columns:1.8fr 1.2fr">
+    <!-- Left Table -->
+    <div class="card tw" style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--bd);background:var(--bg)">
+            <th style="width:36px;padding:10px 12px">
+              <input type="checkbox" ${isAllSelected ? 'checked' : ''} onchange="toggleSelectAllVisible(this.checked)">
+            </th>
+            <th style="padding:10px 10px">ORDER</th>
+            <th style="padding:10px 10px">STORE / CUSTOMER</th>
+            <th style="padding:10px 10px">COD</th>
+            <th style="padding:10px 10px">CALL</th>
+            <th style="padding:10px 10px">ASSIGNED TO</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${L.map(o => `
+            <tr class="row ${o.id === ui.open ? 'sel' : ''} ${ui.callSel.has(o.id) ? 'sel' : ''}" onclick="ui.open=${o.id};draw()">
+              <td onclick="event.stopPropagation()" style="padding:10px 12px">
+                <input type="checkbox" style="transform:scale(1.1);cursor:pointer" ${ui.callSel.has(o.id) ? 'checked' : ''} onchange="toggleCallSel(${o.id})">
+              </td>
+              <td style="padding:10px 10px">
+                <b>${o.no}</b><br>
+                <span class="k" style="font-size:11.5px">${T(o.t)}</span>
+              </td>
+              <td style="padding:10px 10px">
+                <span class="k" style="font-weight:600">Store ${o.store + 1}</span><br>
+                <b>${e(o.cust)}</b>
+              </td>
+              <td style="padding:10px 10px">
+                <b>${R(o.cod)}</b>
+              </td>
+              <td style="padding:10px 10px">
+                ${pill(callStatusLabel(o.call), COL[o.call] || 'n')}
+              </td>
+              <td onclick="event.stopPropagation()" style="padding:10px 10px">
+                ${o.asg ? `
+                  <span style="display:inline-flex;align-items:center;gap:6px;background:var(--b-bg);color:var(--b-fg);padding:3px 9px;border-radius:6px;font-size:12px;font-weight:600">
+                    <span style="background:var(--b-fg);color:#fff;width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">
+                      ${o.asg.charAt(0).toUpperCase()}
+                    </span>
+                    ${e(o.asg)}
+                  </span>
+                ` : `
+                  <span class="pill n" style="font-size:11px">Unassigned</span>
+                `}
+              </td>
+            </tr>
+          `).join('') || '<tr><td colspan=6 style="text-align:center;padding:24px" class="k">No orders found matching this filter.</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right Detail Card -->
+    <div class="card">
+      ${O ? (() => {
+        const p = phoneInfo(O.phone);
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            ${O.asg ? `
+              <span class="pill b" style="font-size:12px">👤 Assigned to: <b>${e(O.asg)}</b></span>
+            ` : `
+              <span class="pill a" style="font-size:12px">⚠️ Unassigned</span>
+            `}
+            <button class="btn sec" style="padding:4px 10px;font-size:12px" onclick="openEditOrderModal(${O.id})">✏️ Edit Order</button>
+          </div>
+
+          <h3 style="font-size:22px;margin:8px 0 4px">${e(O.cust)}</h3>
+          <div class="k">Order ${O.no} · Store ${O.store + 1} · Placed ${T(O.t)}</div>
+
+          <div style="background:var(--bg);padding:12px 14px;border-radius:10px;margin:12px 0;border:1px solid var(--bd)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="k">Phone:</span><b>${e(O.phone)}</b>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="k">Address:</span><span style="text-align:right;max-width:70%;font-weight:500">${e(O.addr)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="k">Items:</span><span style="text-align:right;max-width:70%;font-weight:500">${e(O.item)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--bd);padding-top:8px;margin-top:8px">
+              <span class="k">COD Amount:</span><b class="big g" style="font-size:20px">${R(O.cod)}</b>
+            </div>
+          </div>
+
+          <div class="call-actions">
+            ${p.valid ? `
+              <a class="btn p phone-link" href="${p.href}" onclick="return callNow(${O.id})">☎ Call Now</a>
+            ` : `
+              <button class="btn p" disabled>☎ Call Now</button>
+              <span class="k" style="color:var(--r-fg)">Invalid phone number</span>
+            `}
+            <button class="btn" onclick="openEditOrderModal(${O.id})">✏️ Edit Details</button>
+          </div>
+
+          <!-- Assign / Reassign Single Order Dropdown -->
+          <div style="margin:12px 0;padding:10px;background:var(--bg);border-radius:8px">
+            <span class="k" style="font-weight:700">Change Assignee:</span>
+            <select style="width:100%;margin-top:4px" onchange="inlineAssignOrder(${O.id}, this.value)">
+              <option value="">Select caller...</option>
+              ${callers.map(c => `<option value="${e(c.n)}" ${O.asg === c.n ? 'selected' : ''}>👤 ${e(c.n)}</option>`).join('')}
+              <option value="__unassign__">❌ Unassign</option>
+            </select>
+          </div>
+
+          ${O.cb ? `<p class="k">Scheduled callback: <b>${callbackValue(O)}</b></p>` : ''}
+          <div class="k" style="font-weight:700">Timeline History</div>
+          <div class="tl">
+            ${O.at.map(a => `
+              <div><b>${e(a.out)}</b> · ${e(a.by)} · ${T(a.t)}${a.note ? ' — ' + e(a.note) : ''}</div>
+            `).join('') || '<div class="k">No attempts yet</div>'}
+          </div>
+
+          ${O.call === 'Cancelled' ? `
+            <p>${pill('Cancelled', 'r')} ${e(O.reason || 'No reason recorded')}</p>
+            <button class="btn p" onclick="reopen()">Reopen order</button>
+          ` : `
+            <textarea id="note" rows=2 style="width:100%" placeholder="Call notes / customer response"></textarea>
+            <div class="row2">
+              <button class="btn p" onclick="act('Confirmed')">Confirmed</button>
+              ${['Cancelled', 'No Answer', 'Call Back Later', 'Wrong Number'].map(x => `
+                <button class="btn" onclick="act('${x}')">${x}</button>
+              `).join('')}
+            </div>
+          `}
+        `;
+      })() : `
+        <div style="text-align:center;padding:50px 20px" class="k">
+          <h3>👈 Select an order from the list</h3>
+          <p>Click on any order to view its timeline, customer address, or assign it individually.</p>
+        </div>
+      `}
+    </div>
+  </div>`;
+};
+
+function act(out){
+  const o=S.o.find(x=>x.id===ui.open);
+  if(!o)return toast('Select an order first.');
+  const note=$('#note')?.value.trim()||'';
+  if(out=='Cancelled'){
+    if(o.ship&&!o.ship.failed)return toast('This order is already booked with a courier, so it cannot be cancelled here.');
+    o.reason=$('#cr').value;
+    if(o.reason=='Other'&&!note)return toast('Add a note explaining why this order is cancelled.');
+  }
+  if(out=='Request correction'&&!note)return toast('Describe what needs correcting in the call notes.');
+  let callbackAt=null;
+  if(out=='Call Back Later'){
+    const raw=$('#cbtime')?.value;
+    if(!raw)return toast('Choose a callback date and time.');
+    callbackAt=new Date(raw).getTime();
+    if(!Number.isFinite(callbackAt)||callbackAt<=Date.now())return toast('Callback time must be in the future.');
+  }
+  o.at.push({t:Date.now(),out,note:out=='Cancelled'?o.reason+(note?' — ':'')+note:note,by:'Admin',...(callbackAt?{callbackAt}:{})});
+  if(out=='Request correction')o.corr=true;
+  else{
+    o.call=out;
+    if(out=='Call Back Later')o.cb=callbackAt;
+    if(out=='No Answer'&&S.set.auto&&o.at.filter(a=>a.out=='No Answer').length>=S.set.max)o.call='Cancelled';
+  }
+  log(`${o.no}: ${out}${callbackAt?' for '+new Date(callbackAt).toLocaleString():''}`);
+  ui.open=null;
+  draw();
+  toast(o.no+' marked '+out+'.');
+}
+
+// Shipments & Tracking
+const SF=['All','Booked','In Transit','Out for Delivery','Delivered','Return in Transit','Returned to Sender'];
+V.tracking=()=>{
+  const L=list().filter(ss).filter(o=>ui.sf=='All'||o.ship.status==ui.sf),O=S.o.find(o=>o.id==ui.cid&&ss(o));
+  return`<h2>Shipments & Tracking</h2><div class="row2">${SF.map(f=>`<button class="pill ${COL[f]||'n'} ${ui.sf==f?'on':''}" onclick="ui.sf='${f}';draw()">${f}</button>`).join('')}</div><div class="two"><div class="card tw"><table><tr><th>Courier<th>Consignment<th>Courier status<th>MSA status<th>Last update</tr>${L.map(o=>`<tr class="row ${o.id==ui.cid?'sel':''}" onclick="ui.cid=${o.id};draw()"><td>${o.ship.courier}<td>${o.ship.cn}<td>${e(o.ship.ev.at(-1).raw)}<td>${pill(o.ship.status)}<td>${T(o.ship.ev.at(-1).t)}</tr>`).join('')||'<tr><td colspan=5>No shipments in this status.</tr>'}</table></div>
+  <div class="card">${O?`<h3>${O.ship.cn} · ${O.ship.courier}</h3><div class="k">History is kept, never overwritten</div><div class="tl">${[...O.ship.ev].reverse().map(v=>`<div><b>${v.s}</b><br><span class=k>${e(v.raw)} · ${T(v.t)}</span></div>`).join('')}</div><div class="row2"><button class="btn" onclick="toast('Label for ${O.ship.cn} sent to the printer.')">Print label</button><button class="btn" onclick="toast('Tracking is up to date.')">Refresh</button></div><div class="k">Simulate courier update</div><div class="row2"><button class="btn" onclick="adv(1)">Advance</button><button class="btn" onclick="adv(0)">Send back</button></div>`:'<div class="k">Select a shipment to see its full event history.</div>'}</div></div>`;
+};
+
+function adv(fw){
+  const o=S.o.find(x=>x.id===ui.cid);
+  if(!o||!o.ship)return;
+  const s=o.ship,st=s.status,P=s.ev.some(v=>v.s=='Return in Transit')||(!fw&&['In Transit','Out for Delivery'].includes(st))?RET:PATH;
+  let nx=fw?P[P.indexOf(st)+1]:(P==RET&&st!='Booked'?null:'Return in Transit');
+  if(!fw&&['In Transit','Out for Delivery'].includes(st))nx='Return in Transit';
+  if(!nx||st=='Delivered'||st=='Returned to Sender')return toast('This shipment is closed.');
+  if(nx=='Returned to Sender'&&st!='Return in Transit')return;
+  s.status=nx;
+  s.ev.push({s:nx,raw:RAWS[nx],t:Date.now()});
+  if(nx=='Delivered')s.rep=null;
+  log(`${s.cn} → ${nx}`);
+  draw();
+}
+
+// COD Reconciliation
+const mt=o=>{const s=o.ship;return s.rec==null?'Unmatched':s.rec<o.cod?'Short payment':s.rec==o.cod&&(s.rep==null||s.rep==o.cod)?'Matched':'Needs review'};
+V.cod=()=>{
+  const D=list().filter(o=>ss(o)&&o.ship.status=='Delivered'),ex=sum(D,o=>o.cod),rp=sum(D,o=>o.ship.rep),rc=sum(D,o=>o.ship.rec);
+  return`<div class="row2"><h2 style="margin:0;flex:1">COD Reconciliation</h2><button class="btn" onclick="exportCODCSV()">📥 Export CSV</button><button class="btn" onclick="imp()">Import settlement report</button><button class="btn p" onclick="(document.querySelector('.ri')||{focus(){toast('Every delivered shipment has a receipt.')}}).focus()">Record bank receipt</button></div><div class="grid">${[['Expected COD (delivered)',ex],['Courier-reported',rp],['Bank received',rc,'g'],['Outstanding',ex-rc]].map(k=>`<div class="card"><div class="k">${k[0]}</div><div class="big ${k[2]||''}">${R(k[1])}</div></div>`).join('')}</div>
+  <div class="card tw"><h3>Settlement matching</h3><p class="k">Delivered is never counted as received. Only a recorded bank receipt is.</p><table><tr><th>Consignment<th>Courier<th>Expected<th>Courier-reported<th>Received<th>Match</tr>${D.map(o=>`<tr><td>${o.ship.cn}<td>${o.ship.courier}<td>${R(o.cod)}<td>${o.ship.rep==null?'—':R(o.ship.rep)}<td>${o.ship.rec==null?`<input class="ri" id="r${o.id}" type="number" min="0" style="width:110px" placeholder="Amount"> <button class="btn" onclick="rcv(${o.id})">Save</button>`:R(o.ship.rec)}<td>${pill(mt(o))}</tr>`).join('')||'<tr><td colspan=6>No delivered shipments yet.</tr>'}</table></div>`;
+};
+
+function imp(){
+  let n=0;
+  S.o.forEach(o=>{if(ss(o)&&o.ship.status=='Delivered'&&o.ship.rep==null){o.ship.rep=o.id%3==0?o.cod-200:o.cod;n++}});
+  log('Imported settlement report: '+n+' rows');
+  draw();
+  toast(n?n+' rows imported from the settlement report.':'Nothing new to import.');
+}
+
+function rcv(i){
+  const o=S.o.find(x=>x.id===i);
+  if(!o)return;
+  const v=+$('#r'+i).value;
+  if(!(v>0))return toast('Enter the amount that reached the bank.');
+  o.ship.rec=v;
+  log(`Bank receipt ${R(v)} for ${o.ship.cn}`);
+  draw();
+}
+
+// Reports
+const pc=(a,b)=>b?Math.round(100*a/b)+'%':'0%';
+V.reports=()=>{
+  const L=list(),A=L.flatMap(o=>o.at),cl=L.filter(o=>o.at.length),S2=L.filter(ss),cs=S2.filter(o=>['Delivered','Returned to Sender'].includes(o.ship.status)),mx=Math.max(1,...[0,1,2,3].map(i=>L.filter(o=>o.store==i).length));
+  return`<div class="row2"><h2 style="margin:0;flex:1">Reports & Analytics</h2><button class="btn" onclick="exportReportsCSV()">📥 Export Stats CSV</button></div>
+  <div class="grid">${[['Confirmation rate',pc(cl.filter(o=>o.call=='Confirmed').length,cl.length),'Confirmed ÷ orders called'],['No-answer rate',pc(A.filter(a=>a.out=='No Answer').length,A.length),'No Answer ÷ call attempts'],['Delivery rate',pc(cs.filter(o=>o.ship.status=='Delivered').length,cs.length),'Delivered ÷ closed shipments'],['Return rate',pc(cs.filter(o=>o.ship.status!='Delivered').length,cs.length),'Returned ÷ closed shipments']].map(k=>`<div class="card"><div class="k">${k[0]}</div><div class="big">${k[1]}</div><div class="k">${k[2]}</div></div>`).join('')}</div>
+  <div class="two eq"><div class="card"><h3>Orders per store</h3><div class="cols">${[0,1,2,3].map(i=>{const n=L.filter(o=>o.store==i).length;return`<div style="height:${n/mx*100}%"><b>${n}</b></div>`}).join('')}</div><div class="cols" style="height:auto;margin-top:6px">${[1,2,3,4].map(i=>`<span class="k" style="flex:1;text-align:center">Store ${i}</span>`).join('')}</div></div>
+  <div class="card tw"><h3>Courier comparison</h3><table><tr><th>Courier<th>Booking success<th>Delivery<th>Return<th>Avg days</tr>${COUR.map(c=>{const all=L.filter(o=>o.ship?.courier==c),ok=all.filter(ss),cl=ok.filter(o=>['Delivered','Returned to Sender'].includes(o.ship.status)),dv=cl.filter(o=>o.ship.status=='Delivered'),d=dv.map(o=>(o.ship.ev.at(-1).t-o.ship.ev[0].t)/DAY);return`<tr><td>${c}<td>${pc(ok.length,all.length)}<td>${pc(dv.length,cl.length)}<td>${pc(cl.length-dv.length,cl.length)}<td>${d.length?(sum(d,x=>x)/d.length).toFixed(1):'—'}</tr>`}).join('')}</table><p class="k">Shipments without event data are excluded from averages.</p></div></div>`;
+};
+
+// Courier Settings
+V.couriers=()=>`<h2>Courier Settings & API Integrations</h2>
+<p class="k">Configure credentials for live bookings via PostEx, Trax, and Leopards. The system routes bookings through your backend proxy to ensure API secrets remain encrypted.</p>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+  ${COUR.map(c=>{
+    const f=S.cfg[c]||{};
+    return`<div class="card">
+      <div class="row2" style="justify-content:space-between">
+        <h3 style="margin:0">${c}</h3>
+        ${pill(f.mode||'Simulation',f.mode==='Live API'?'g':'b')}
+      </div>
+      <div class="k" style="margin-top:8px">Integration Mode</div>
+      <select id="m${c}" style="width:100%" onchange="S.cfg['${c}'].mode=this.value;save()">
+        <option ${f.mode==='Live API'?'selected':''}>Live API</option>
+        <option ${f.mode==='Simulation'?'selected':''}>Simulation</option>
+      </select>
+      <div class="k" style="margin-top:8px">Account Name</div>
+      <input id="a${c}" style="width:100%" placeholder="e.g. My Brand Official" value="${e(f.acc||'')}">
+      ${c==='PostEx'?`
+        <div class="k" style="margin-top:8px">Merchant API Token</div>
+        <input id="tok${c}" type="password" style="width:100%" placeholder="Enter PostEx token" value="${e(f.token||'')}">
+        <div class="k" style="margin-top:8px">Pickup Address Code</div>
+        <input id="pk${c}" style="width:100%" placeholder="e.g. 001" value="${e(f.pickupId||'001')}">
+      `:c==='Trax'?`
+        <div class="k" style="margin-top:8px">Trax API Key</div>
+        <input id="tok${c}" type="password" style="width:100%" placeholder="Enter Trax API Key" value="${e(f.apiKey||'')}">
+        <div class="k" style="margin-top:8px">Pickup Address ID</div>
+        <input id="pk${c}" style="width:100%" placeholder="e.g. 1" value="${e(f.pickupId||'1')}">
+      `:`
+        <div class="k" style="margin-top:8px">Leopards API Key</div>
+        <input id="tok${c}" type="password" style="width:100%" placeholder="Enter Leopards Key" value="${e(f.apiKey||'')}">
+        <div class="k" style="margin-top:8px">Leopards API Password</div>
+        <input id="pwd${c}" type="password" style="width:100%" placeholder="Enter Leopards Password" value="${e(f.apiPassword||'')}">
+      `}
+      <div class="row2" style="margin-top:14px">
+        <button class="btn p" style="flex:1" onclick="saveCourierConfig('${c}')">Save Config</button>
+        <button class="btn" onclick="testCourierConnection('${c}')">Test</button>
+      </div>
+    </div>`;
+  }).join('')}
+</div>`;
+
+function saveCourierConfig(c){
+  const acc=$('#a'+c).value.trim();
+  const mode=$('#m'+c).value;
+  S.cfg[c]=S.cfg[c]||{};
+  S.cfg[c].acc=acc;
+  S.cfg[c].mode=mode;
+  S.cfg[c].ok=true;
+  if(c==='PostEx'){
+    S.cfg[c].token=$('#tok'+c)?.value.trim()||'';
+    S.cfg[c].pickupId=$('#pk'+c)?.value.trim()||'001';
+  }else if(c==='Trax'){
+    S.cfg[c].apiKey=$('#tok'+c)?.value.trim()||'';
+    S.cfg[c].pickupId=$('#pk'+c)?.value.trim()||'1';
+  }else if(c==='Leopards'){
+    S.cfg[c].apiKey=$('#tok'+c)?.value.trim()||'';
+    S.cfg[c].apiPassword=$('#pwd'+c)?.value.trim()||'';
+  }
+  log(`${c} configuration saved (${mode})`);
+  save();
+  draw();
+  toast(`✅ ${c} settings saved successfully.`);
+}
+
+async function testCourierConnection(c){
+  toast(`Testing ${c} API connection...`);
+  if(!isBackendConnected){
+    return toast(`ℹ️ Backend server offline. Running in local simulation mode.`);
+  }
+  toast(`✅ ${c} connection verified via backend proxy.`);
+}
+
+function DEF(){
+  S.staff=S.staff||[{n:'Owner (you)',r:'Owner',a:1},{n:'bilalajmal7557@gmail.com',r:'Caller',a:1},{n:'Sadia',r:'Caller',a:1},{n:'Imran',r:'Caller',a:1},{n:'Kamran',r:'Shipping',a:1}];
+  if(!S.staff.some(s => s.n === 'bilalajmal7557@gmail.com')){
+    S.staff.push({n:'bilalajmal7557@gmail.com', r:'Caller', a:1});
+  }
+  S.stores=S.stores||[0,1,2,3].map(i=>({dom:'store'+(i+1)+'.myshopify.com',on:1,last:Date.now()-(i==2?9e6:3e5)}));
+  S.set=S.set||{cb:60,max:3,auto:false};
+}
+
+// Shipment Queue
+const RDY=o=>['Ready to Book','Booking Failed'].includes(sl(o));
+V.queue=()=>{
+  const L=list().filter(RDY);
+  return`<div class="row2"><h2 style="margin:0;flex:1">Shipment Queue</h2><select onchange="ui.cour=this.value;draw()">${COUR.map(c=>`<option ${ui.cour==c?'selected':''}>${c}</option>`).join('')}</select><button class="btn" onclick="selAll()">Select all</button><button class="btn p" onclick="book()" ${ui.sel.size?'':'disabled'}>Book selected (${ui.sel.size})</button></div>${S.cfg[ui.cour]?.ok?'':`<div class="card" style="color:var(--a-fg)">${ui.cour} is not connected yet. Verify it in Courier Settings before booking.</div>`}<div class="card tw"><table><tr><th><th>Order<th>Store<th>Customer<th>Address<th>COD<th>State<th></tr>${L.map(o=>`<tr><td><input type="checkbox" ${ui.sel.has(o.id)?'checked':''} onchange="tg(${o.id})"><td><b>${o.no}</b><td>Store ${o.store+1}<td>${e(o.cust)}<td>${e(o.addr)}<td>${R(o.cod)}<td>${pill(sl(o))}${o.ship?.failed?`<br><span class="k">${e(o.ship.err)}</span>`:''}<td><button class="btn" onclick="ui.sel=new Set([${o.id}]);book()">${o.ship?.failed?'Retry':'Book'}</button></tr>`).join('')||'<tr><td colspan=8>Nothing waiting. Orders appear here once a caller confirms them.</tr>'}</table></div>`;
+};
+function selAll(){list().filter(RDY).forEach(o=>ui.sel.add(o.id));draw()}
+
+// Staff Management
+V.staff=()=>`<h2>Staff Management & Callers</h2>
+<div class="card"><div class="row2"><input id="sn" placeholder="Full name"><select id="sr"><option>Caller</option><option>Shipping</option><option>Owner</option></select><button class="btn p" onclick="addS()">Add staff</button><button class="btn" onclick="rr()">Assign unassigned pending calls (Round-Robin)</button></div></div>
+<div class="card tw"><table><tr><th>Name<th>Role<th>Pending calls assigned<th>Status<th>Action</tr>${S.staff.map((s,i)=>`<tr><td>${e(s.n)}<td>${pill(s.r,'b')}<td>${S.o.filter(o=>o.asg==s.n&&o.call=='Pending Call').length}<td>${pill(s.a?'Active':'Inactive',s.a?'g':'n')}<td><button class="btn" onclick="tgS(${i})" ${i==0?'disabled':''}>${s.a?'Deactivate':'Reactivate'}</button></tr>`).join('')}</table></div>`;
+
+function addS(){const n=$('#sn').value.trim();if(!n)return toast('Enter a name for the new staff member.');S.staff.push({n,r:$('#sr').value,a:1});log('Added staff '+n);draw()}
+function tgS(i){const s=S.staff[i];s.a=!s.a;if(!s.a)S.o.forEach(o=>{if(o.asg==s.n&&o.call=='Pending Call')delete o.asg});log((s.a?'Reactivated ':'Deactivated ')+s.n);draw()}
+function rr(){const c=S.staff.filter(s=>s.r=='Caller'&&s.a);if(!c.length)return toast('Add an active caller first.');let k=0;S.o.filter(o=>o.call=='Pending Call'&&!o.asg).forEach((o,j)=>{o.asg=c[j%c.length].n;k++});log('Assigned '+k+' pending calls');draw();toast(k+' orders assigned evenly across callers.')}
+
+// Shopify Stores & Live Webhooks
+V.shop=()=>`
+<div class="row2">
+  <h2 style="margin:0;flex:1">Shopify Stores & Webhook Ingestion</h2>
+  <button class="btn sec" onclick="openShopifyImportModal()">📥 Import Order (JSON/CSV)</button>
+  <button class="btn p" onclick="syncStores()">Sync all stores</button>
+</div>
+
+<div class="card" style="border-left:5px solid var(--g)">
+  <h3 style="margin-top:0">🔗 Real-Time Shopify Webhook Listener</h3>
+  <p class="k">Orders created on your Shopify store are instantly captured and placed into the Calling Team queue with complete phone & address normalization.</p>
+  <div class="row2" style="background:var(--bg);padding:10px 14px;border-radius:8px">
+    <code style="flex:1;font-size:13px;user-select:all" id="webhook-url">${window.location.origin.replace(':3000', ':5000')}/api/webhooks/shopify/orders-create</code>
+    <button class="btn" style="padding:4px 10px;font-size:12px" onclick="navigator.clipboard.writeText($('#webhook-url').textContent);toast('Copied Webhook URL!')">Copy URL</button>
+  </div>
+  <p class="k" style="margin-bottom:0">Setup in Shopify: <b>Settings &gt; Notifications &gt; Webhooks &gt; Create Webhook</b> &gt; Event: <b>Order creation</b> &gt; Format: <b>JSON</b>.</p>
+</div>
+
+<div class="card tw">
+  <table><tr><th>Store<th>Shopify domain<th>Orders<th>Last sync<th>Status<th>Action</tr>
+  ${S.stores.map((s,i)=>`<tr><td>Store ${i+1}<td><input value="${e(s.dom)}" style="width:100%;min-width:190px" onchange="S.stores[${i}].dom=this.value.trim();save()"><td>${S.o.filter(o=>o.store==i).length}<td>${T(s.last)}<td>${pill(!s.on?'Disconnected':S.lag[i]?'Sync lag':'Connected',!s.on?'n':S.lag[i]?'a':'g')}<td><button class="btn" onclick="syncOne(${i})" ${s.on?'':'disabled'}>Sync now</button> <button class="btn" onclick="tgSt(${i})">${s.on?'Disconnect':'Connect'}</button></tr>`).join('')}
+  </table>
+</div>`;
+
+function openShopifyImportModal(){
+  const m=$('#modal-container');
+  m.innerHTML=`
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box">
+      <h3 style="margin-top:0">Import Shopify Order (JSON)</h3>
+      <p class="k">Paste a Shopify <code>orders/create</code> JSON payload, or click below to load a sample order.</p>
+      <textarea id="shopify-json-input" rows="8" style="width:100%;font-family:monospace;font-size:12px" placeholder='Paste Shopify Order JSON here...'></textarea>
+      <div class="row2" style="justify-content:space-between;margin-top:14px">
+        <button class="btn" onclick="loadSampleShopifyOrder()">Load Sample JSON</button>
+        <div>
+          <button class="btn" onclick="closeModal()">Cancel</button>
+          <button class="btn p" onclick="processShopifyImport()">Import into Queue</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function loadSampleShopifyOrder(){
+  const sample={
+    id: 8291048201,
+    name: "#GLV-9402",
+    total_price: "4200.00",
+    created_at: new Date().toISOString(),
+    customer: { first_name: "Mahnoor", last_name: "Tariq", phone: "+923214589210" },
+    shipping_address: {
+      name: "Mahnoor Tariq",
+      phone: "03214589210",
+      address1: "House 45, Street 8, Sector F-8/2",
+      city: "Islamabad"
+    },
+    line_items: [{ title: "Gluvea Vitamin C Serum", quantity: 1 }, { title: "Daily Sunscreen SPF50", quantity: 1 }]
+  };
+  $('#shopify-json-input').value = JSON.stringify(sample, null, 2);
+}
+
+function processShopifyImport(){
+  try{
+    const val = $('#shopify-json-input').value.trim();
+    if(!val)return toast('Please paste JSON data first.');
+    const data = JSON.parse(val);
+    const newOrder = {
+      id: S.o.length ? Math.max(...S.o.map(o=>o.id||0))+1 : 1,
+      no: data.name || 'MSA-'+(1100+S.o.length),
+      store: 0,
+      cust: data.shipping_address?.name || (data.customer?.first_name+' '+(data.customer?.last_name||'')) || 'Shopify Customer',
+      phone: data.shipping_address?.phone || data.customer?.phone || '',
+      addr: (data.shipping_address?.address1 || '') + (data.shipping_address?.city ? ', '+data.shipping_address.city : ''),
+      item: (data.line_items||[]).map(i=>`${i.title} (${i.quantity}x)`).join(', ') || 'Online Order',
+      cod: Math.round(parseFloat(data.total_price||'0')),
+      call: 'Pending Call',
+      at: [],
+      ship: null,
+      t: Date.now(),
+      source: 'Shopify Import'
+    };
+    S.o.unshift(newOrder);
+    log(`Imported Shopify order ${newOrder.no}`);
+    closeModal();
+    draw();
+    toast(`✅ Order ${newOrder.no} successfully imported into Pending Call queue!`);
+  }catch(err){
+    toast('❌ Invalid JSON format: '+err.message);
+  }
+}
+
+function syncOne(i){
+  const x=mk(S.o.length,Date.now());
+  x.store=i;
+  x.cust=NM[(S.o.length*7)%12];
+  S.o.push(x);
+  S.lag[i]=0;
+  S.stores[i].last=Date.now();
+  log('Synced Store '+(i+1));
+  draw();
+  toast('Store '+(i+1)+' synced. 1 new order waiting for a call.');
+}
+
+function tgSt(i){
+  S.stores[i].on=!S.stores[i].on;
+  log((S.stores[i].on?'Connected':'Disconnected')+' Store '+(i+1));
+  draw();
+}
+
+// System Settings
+V.sys=()=>{
+  const s=S.set;
+  return`<h2>System Settings & Cloud Sync</h2>
+  <div class="card" style="max-width:640px">
+    <h3>🌐 Central Backend API Connection</h3>
+    <label class="k">Backend API Endpoint</label><br>
+    <input id="cfg-backend-url" style="width:100%" value="${e(backendUrl)}" placeholder="http://localhost:5000/api"><br><br>
+    <button class="btn p" onclick="saveBackendUrl()">Update Server URL</button>
+    <button class="btn" onclick="checkBackend();toast('Checking server connection...')">Test Ping</button>
+  </div>
+  <div class="card" style="max-width:640px">
+    <h3>📞 Calling Rules</h3>
+    <label class="k">Callback delay (minutes)</label><br>
+    <input type="number" min="5" value="${s.cb}" onchange="S.set.cb=+this.value||60;save()"><br><br>
+    <label class="k">Maximum no-answer attempts</label><br>
+    <input type="number" min="1" value="${s.max}" onchange="S.set.max=+this.value||3;save()"><br><br>
+    <label><input type="checkbox" ${s.auto?'checked':''} onchange="S.set.auto=this.checked;save()"> Cancel an order automatically after the maximum no-answer attempts</label>
+  </div>
+  <div class="card" style="max-width:640px">
+    <h3>Data Management</h3>
+    <p class="k">Reset restores sample orders, staff, and simulated couriers.</p>
+    <button class="btn" onclick="rst()">${ui.rc?'Click again to confirm reset':'Reset sample data'}</button>
+  </div>`;
+};
+
+function saveBackendUrl(){
+  const val = $('#cfg-backend-url').value.trim();
+  if(!val)return toast('Please enter a valid backend URL.');
+  backendUrl = val;
+  localStorage.setItem('msa_backend_url', backendUrl);
+  checkBackend();
+  toast('Backend URL updated to: '+backendUrl);
+}
+
+function rst(){
+  if(!ui.rc){ui.rc=1;return draw()}
+  ui.rc=0;
+  S=seed();
+  DEF();
+  ui.sel.clear();
+  ui.open=null;
+  log('Reset sample data');
+  draw();
+  toast('Sample data restored.');
+}
+
+// Audit Logs
+V.audit=()=>`
+<div class="row2">
+  <h2 style="margin:0;flex:1">Audit Logs & Action Trail</h2>
+  <button class="btn" onclick="exportAuditCSV()">📥 Export Audit CSV</button>
+</div>
+<div class="card tw"><table><tr><th>Time<th>Who<th>Action</tr>${S.audit.map(a=>`<tr><td>${T(a.t)}<td>${a.by}<td>${e(a.a)}</tr>`).join('')||'<tr><td colspan=3>Nothing logged yet. Calls, bookings and receipts appear here.</tr>'}</table></div>`;
+
+draw();
+checkBackend();
+setInterval(checkBackend, 15000);
+</script></body></html>

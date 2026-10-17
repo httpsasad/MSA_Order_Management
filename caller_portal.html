@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MSA Calling Team — Order Verification Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f3ee;
+      --cd: #ffffff;
+      --tx: #1b1d22;
+      --mu: #6b6e75;
+      --bd: #e3e1d9;
+      --g: #0f6b5a;
+      --sb: #14161b;
+      --g-bg: #d8efe8;
+      --g-fg: #0b5445;
+      --b-bg: #dce7f8;
+      --b-fg: #1f4b8f;
+      --a-bg: #fbe9cc;
+      --a-fg: #8a4b06;
+      --r-bg: #f8d9d9;
+      --r-fg: #a02323;
+      --n-bg: #e8e6df;
+      --n-fg: #4b4e55;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #101215;
+        --cd: #1a1d23;
+        --tx: #eceae4;
+        --mu: #9a9da5;
+        --bd: #2c3038;
+        --g: #35b79b;
+        --g-bg: #12362e;
+        --g-fg: #7fe0c6;
+        --b-bg: #1a2c4a;
+        --b-fg: #8fb4ee;
+        --a-bg: #3d2c10;
+        --a-fg: #f0b865;
+        --r-bg: #401a1a;
+        --r-fg: #f09090;
+        --n-bg: #2a2d34;
+        --n-fg: #b6b9c0;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { font: 14px/1.45 Manrope, system-ui, sans-serif; background: var(--bg); color: var(--tx); display: flex; flex-direction: column; }
+    
+    /* Header Bar */
+    #top-bar {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--bd);
+      background: var(--cd);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--g);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: 8px;
+    }
+    .brand-badge {
+      font-size: 11px;
+      background: var(--b-bg);
+      color: var(--b-fg);
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+    input, select, textarea, button { font: inherit; color: var(--tx); }
+    input, select, textarea {
+      background: var(--cd);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    #search-box { flex: 1; min-width: 200px; }
+    
+    .btn {
+      border: 1px solid var(--bd);
+      background: var(--cd);
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn.p { background: var(--g); border-color: var(--g); color: #fff; }
+    .btn.p:hover { opacity: 0.9; }
+    .btn.sec { background: var(--b-bg); color: var(--b-fg); border-color: var(--b-fg); }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pill.g { background: var(--g-bg); color: var(--g-fg); }
+    .pill.b { background: var(--b-bg); color: var(--b-fg); }
+    .pill.a { background: var(--a-bg); color: var(--a-fg); }
+    .pill.r { background: var(--r-bg); color: var(--r-fg); }
+    .pill.n { background: var(--n-bg); color: var(--n-fg); }
+
+    /* Main Container */
+    #main-content {
+      flex: 1;
+      padding: 20px;
+      max-width: 1350px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--cd);
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .two-col {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1.6fr;
+      align-items: start;
+    }
+    .k { color: var(--mu); font-size: 12.5px; }
+    .big { font-size: 24px; font-weight: 800; }
+    .big.g { color: var(--g); }
+    .row2 { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+    .tl { border-left: 2px solid var(--bd); padding-left: 12px; margin: 12px 0; font-size: 13px; }
+    .tl div { margin-bottom: 8px; }
+
+    /* Order Queue Cards */
+    .q-item {
+      border: 1px solid var(--bd);
+      border-left: 5px solid var(--bd);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      background: var(--cd);
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .q-item:hover { transform: translateY(-1px); }
+    .q-item.on { border-width: 2px 2px 2px 5px; outline: 2px solid var(--g); }
+    .q-item.status-pending { border-left-color: #b8590a; background: color-mix(in srgb, var(--a-bg) 18%, var(--cd)); }
+    .q-item.status-confirmed { border-left-color: #16805d; background: color-mix(in srgb, var(--g-bg) 35%, var(--cd)); }
+    .q-item.status-issue { border-left-color: #c47a12; background: color-mix(in srgb, var(--a-bg) 40%, var(--cd)); }
+    .q-item.status-rejected { border-left-color: #c33d3d; background: color-mix(in srgb, var(--r-bg) 35%, var(--cd)); }
+    
+    .status-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--mu); margin: 6px 0 14px; }
+    .status-key { display: inline-flex; align-items: center; gap: 6px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+    .status-dot.green { background: #16805d; }
+    .status-dot.amber { background: #c47a12; }
+    .status-dot.red { background: #c33d3d; }
+    .status-dot.gray { background: #7b8494; }
+
+    .call-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .phone-link { text-decoration: none; }
+    .callback-field { display: block; width: 100%; margin: 8px 0; }
+    .history-meta { color: var(--mu); font-size: 11.5px; }
+
+    /* Modals & Toasts */
+    #toast {
+      position: fixed;
+      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--sb);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      display: none;
+      z-index: 99;
+      max-width: 90vw;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      padding: 20px;
+    }
+    .modal-box {
+      background: var(--cd);
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      max-width: 580px;
+      width: 100%;
+      padding: 22px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    @media (max-width: 860px) {
+      .two-col { grid-template-columns: 1fr; }
+      #top-bar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar for Callers -->
+  <header id="top-bar">
+    <div class="brand-title">
+      <span>📞 MSA Calling Team</span>
+      <span class="brand-badge">Agent Desk</span>
+    </div>
+
+    <!-- Active Caller Selector -->
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="k" style="font-weight:700">Agent:</span>
+      <select id="agent-select" onchange="handleAgentChange(this.value)" style="font-weight:700">
+        <option value="bilalajmal7557@gmail.com">bilalajmal7557@gmail.com</option>
+        <option value="Sadia">Sadia</option>
+        <option value="Imran">Imran</option>
+        <option value="Kamran">Kamran</option>
+        <option value="__custom__">➕ Switch / Enter Email...</option>
+      </select>
+    </div>
+
+    <!-- Search Box -->
+    <input id="search-box" placeholder="🔍 Search customer name, phone, order #..." oninput="callerUI.q=this.value;renderCallingPortal()">
+
+    <!-- Callbacks Due Badge -->
+    <span id="due-badge" class="pill a" style="display:none">0 Callbacks Due</span>
+
+    <!-- Server Connection Badge -->
+    <button class="btn" style="padding:6px 12px;font-size:12px" onclick="syncWithServer()">
+      <span id="conn-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e3a008"></span>
+      <span id="conn-text">Sync with Server</span>
+    </button>
+  </header>
+
+  <!-- Main Calling Workspace -->
+  <main id="main-content"></main>
+
+  <div id="toast"></div>
+  <div id="modal-container"></div>
+
+  <script>
+    const DAY = 864e5;
+    const TABS = ['Pending Call', 'No Answer', 'Call Back Later', 'Wrong Number', 'Cancelled'];
+    const COL = { 'Pending Call': 'a', Confirmed: 'g', Cancelled: 'r', 'No Answer': 'n', 'Call Back Later': 'a', 'Wrong Number': 'r' };
+    
+    let backendUrl = localStorage.getItem('msa_backend_url') || (window.location.protocol === 'file:' ? 'http://localhost:5000/api' : `${window.location.origin}/api`);
+    let isConnected = false;
+    let activeAgent = localStorage.getItem('msa_caller_name') || 'bilalajmal7557@gmail.com';
+
+    let S = loadState() || seedState();
+    let callerUI = {
+      tab: 'Pending Call',
+      open: null,
+      q: '',
+      filterMode: 'assigned' // 'assigned' | 'all'
+    };
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem('msa2')); } catch (e) { return null; }
+    }
+    function saveState() {
+      try { localStorage.setItem('msa2', JSON.stringify(S)); } catch (e) {}
+    }
+
+    function seedState() {
+      const NM = ['Ayesha Khan', 'Bilal Ahmed', 'Hina Raza', 'Usman Ali', 'Sana Malik', 'Zain Abbas', 'Noor Fatima', 'Hamza Sheikh'];
+      const IT = ['Lawn suit · M', 'Khussa · 39', 'Bedsheet · King', 'Kurta · L', 'Perfume · 100ml'];
+      const CITY = ['Lahore', 'Karachi', 'Islamabad', 'Faisalabad', 'Multan'];
+      const n = Date.now(), o = [];
+      for (let i = 0; i < 16; i++) {
+        o.push({
+          id: i,
+          no: 'MSA-' + (1040 + i),
+          store: i % 4,
+          cust: NM[i % NM.length],
+          phone: '03' + (10 + i % 5) + '-' + (2000000 + i * 48271),
+          addr: 'House ' + (12 + i * 3) + ', Street ' + (i % 6 + 1) + ', ' + CITY[i % CITY.length],
+          item: IT[i % IT.length],
+          cod: Math.round((2000 + i * 650 % 4500) / 50) * 50,
+          call: i < 6 ? 'Pending Call' : i === 6 ? 'No Answer' : i === 7 ? 'Call Back Later' : i === 8 ? 'Cancelled' : 'Confirmed',
+          at: [],
+          ship: null,
+          asg: i % 2 === 0 ? 'bilalajmal7557@gmail.com' : 'Sadia',
+          t: n - (20 - i) * DAY / 2
+        });
+      }
+      return { o, audit: [] };
+    }
+
+    const $ = s => document.querySelector(s);
+    const e = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const R = n => 'PKR ' + Math.round(n).toLocaleString('en-PK');
+    const pill = (t, c) => `<span class="pill ${c || COL[t] || 'n'}">${e(t)}</span>`;
+    const T = t => new Date(t).toLocaleString('en-PK', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+    function phoneInfo(raw) {
+      const digits = String(raw || '').replace(/[\s().-]/g, '');
+      let normalized = digits;
+      if (/^03[0-9]{9}$/.test(digits)) normalized = '+92' + digits.slice(1);
+      else if (/^\+923[0-9]{9}$/.test(digits)) normalized = digits;
+      else return { valid: false, href: '' };
+      return { valid: true, href: 'tel:' + normalized, normalized };
+    }
+
+    function toast(m) {
+      const t = $('#toast');
+      t.textContent = m;
+      t.style.display = 'block';
+      clearTimeout(t.h);
+      t.h = setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    function setAgent(val) {
+      activeAgent = val;
+      localStorage.setItem('msa_caller_name', activeAgent);
+      updateAgentDropdown();
+      toast('Active caller set to: ' + activeAgent);
+      renderCallingPortal();
+    }
+
+    function handleAgentChange(val) {
+      if (val === '__custom__') {
+        const custom = prompt('Enter your caller email or name:', activeAgent);
+        if (custom && custom.trim()) {
+          setAgent(custom.trim());
+        } else {
+          updateAgentDropdown();
+        }
+      } else {
+        setAgent(val);
+      }
+    }
+
+    function updateAgentDropdown() {
+      const sel = $('#agent-select');
+      if (!sel) return;
+      const list = new Set(['bilalajmal7557@gmail.com', 'Sadia', 'Imran', 'Kamran', activeAgent]);
+      if (Array.isArray(S.o)) {
+        S.o.forEach(o => { if (o.asg) list.add(o.asg); });
+      }
+      let html = '';
+      list.forEach(name => {
+        html += `<option value="${e(name)}" ${name === activeAgent ? 'selected' : ''}>👤 ${e(name)}</option>`;
+      });
+      html += `<option value="__custom__">➕ Switch / Enter Email...</option>`;
+      sel.innerHTML = html;
+    }
+
+    function claimOrder(id) {
+      const o = S.o.find(x => x.id === id);
+      if (!o) return;
+      o.asg = activeAgent;
+      o.at.push({ t: Date.now(), out: 'Assigned', note: `Claimed by ${activeAgent}`, by: activeAgent });
+      saveState();
+      renderCallingPortal();
+      syncSingleOrder(o);
+      toast(`Order ${o.no} assigned to you!`);
+    }
+
+    function callStatusClass(status) {
+      if (status === 'Confirmed') return 'status-confirmed';
+      if (['Cancelled', 'Wrong Number'].includes(status)) return 'status-rejected';
+      if (['No Answer', 'Call Back Later'].includes(status)) return 'status-issue';
+      if (status === 'Pending Call') return 'status-pending';
+      return 'status-neutral';
+    }
+
+    function callStatusLabel(status) {
+      return status === 'Confirmed' ? 'Called · Confirmed' :
+        ['Cancelled', 'Wrong Number'].includes(status) ? 'Rejected / Problem' :
+        ['No Answer', 'Call Back Later'].includes(status) ? 'Follow-up Needed' : status;
+    }
+
+    function callNow(id) {
+      const o = S.o.find(x => x.id === id);
+      if (!o) return false;
+      const p = phoneInfo(o.phone);
+      if (!p.valid) {
+        toast('Invalid phone number. Click "Edit" to correct it before calling.');
+        return false;
+      }
+      o.at.push({ t: Date.now(), out: 'Call Started', note: 'Dialed via device calling app.', by: activeAgent });
+      saveState();
+      syncSingleOrder(o);
+      toast('☎ Initiated call to ' + o.cust);
+      return true;
+    }
+
+    // -------------------------------------------------------------
+    // EDIT ORDER MODAL FOR CALLERS
+    // -------------------------------------------------------------
+    function openEditOrderModal(id) {
+      const o = S.o.find(x => x.id === id);
+      if (!o) return toast('Order not found.');
+      const m = $('#modal-container');
+      m.innerHTML = `
+      <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal-box">
+          <div class="row2" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3 style="margin:0">✏️ Edit Order #${e(o.no)}</h3>
+            <button class="btn" style="padding:2px 8px" onclick="closeModal()">✕</button>
+          </div>
+          <p class="k">Update customer details, shipping address, or COD amount agreed upon during the call.</p>
+          
+          <div style="margin-bottom:10px">
+            <label class="k" style="font-weight:700">Customer Full Name</label>
+            <input id="edit-cust" style="width:100%" value="${e(o.cust)}" placeholder="e.g. Ayesha Khan">
+          </div>
+
+          <div style="margin-bottom:10px">
+            <label class="k" style="font-weight:700">Phone Number (Pakistani Mobile: 03001234567)</label>
+            <input id="edit-phone" style="width:100%" value="${e(o.phone)}" placeholder="0300-1234567">
+          </div>
+
+          <div style="margin-bottom:10px">
+            <label class="k" style="font-weight:700">Complete Delivery Address (House, Street, Block, City)</label>
+            <textarea id="edit-addr" rows="3" style="width:100%" placeholder="Complete delivery address">${e(o.addr)}</textarea>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <div>
+              <label class="k" style="font-weight:700">Ordered Items / Size</label>
+              <input id="edit-item" style="width:100%" value="${e(o.item)}" placeholder="e.g. Lawn suit · M">
+            </div>
+            <div>
+              <label class="k" style="font-weight:700">COD Amount (PKR)</label>
+              <input id="edit-cod" type="number" min="0" step="50" style="width:100%" value="${o.cod}">
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label class="k" style="font-weight:700">Call / Edit Note</label>
+            <input id="edit-note" style="width:100%" placeholder="e.g. Corrected house number, confirmed Size M">
+          </div>
+
+          <div class="row2" style="justify-content:flex-end;margin-top:16px">
+            <button class="btn" onclick="closeModal()">Cancel</button>
+            <button class="btn p" onclick="saveEditedOrder(${o.id})">💾 Save Changes</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function closeModal() { $('#modal-container').innerHTML = ''; }
+
+    function saveEditedOrder(id) {
+      const o = S.o.find(x => x.id === id);
+      if (!o) return;
+
+      const cust = $('#edit-cust').value.trim();
+      const phone = $('#edit-phone').value.trim();
+      const addr = $('#edit-addr').value.trim();
+      const item = $('#edit-item').value.trim();
+      const cod = Math.round(parseFloat($('#edit-cod').value) || 0);
+      const note = $('#edit-note').value.trim();
+
+      if (!cust) return toast('Customer name is required.');
+      if (!phone) return toast('Phone number is required.');
+      if (!addr) return toast('Delivery address is required.');
+
+      const changes = [];
+      if (o.cust !== cust) changes.push(`Name: ${cust}`);
+      if (o.phone !== phone) changes.push(`Phone: ${phone}`);
+      if (o.addr !== addr) changes.push(`Address updated`);
+      if (o.item !== item) changes.push(`Item: ${item}`);
+      if (o.cod !== cod) changes.push(`COD: PKR ${cod}`);
+
+      o.cust = cust;
+      o.phone = phone;
+      o.addr = addr;
+      o.item = item;
+      o.cod = cod;
+
+      const editLogText = changes.length ? `Edited (${changes.join(', ')})` : 'Order verified';
+      o.at.push({
+        t: Date.now(),
+        out: 'Details Edited',
+        note: note ? `${editLogText} — ${note}` : editLogText,
+        by: activeAgent
+      });
+
+      closeModal();
+      saveState();
+      renderCallingPortal();
+      syncSingleOrder(o);
+      toast(`✅ Order ${o.no} updated successfully!`);
+    }
+
+    // -------------------------------------------------------------
+    // CALL OUTCOME ACTIONS
+    // -------------------------------------------------------------
+    function recordOutcome(out) {
+      const o = S.o.find(x => x.id === callerUI.open);
+      if (!o) return toast('Select an order first.');
+      const note = $('#call-note')?.value.trim() || '';
+
+      if (out === 'Cancelled') {
+        o.reason = $('#cancel-reason').value;
+        if (o.reason === 'Other' && !note) return toast('Please add a note explaining why this order was cancelled.');
+      }
+
+      let callbackAt = null;
+      if (out === 'Call Back Later') {
+        const raw = $('#cbtime')?.value;
+        if (!raw) return toast('Please choose a callback date and time.');
+        callbackAt = new Date(raw).getTime();
+        if (!Number.isFinite(callbackAt) || callbackAt <= Date.now()) return toast('Callback time must be in the future.');
+      }
+
+      o.at.push({
+        t: Date.now(),
+        out,
+        note: out === 'Cancelled' ? o.reason + (note ? ' — ' + note : '') : note,
+        by: activeAgent,
+        ...(callbackAt ? { callbackAt } : {})
+      });
+
+      o.call = out;
+      if (out === 'Call Back Later') o.cb = callbackAt;
+
+      // Auto cancel after 3 failed attempts
+      if (out === 'No Answer' && o.at.filter(a => a.out === 'No Answer').length >= 3) {
+        o.call = 'Cancelled';
+        o.reason = 'Max no-answer attempts reached (3x)';
+      }
+
+      callerUI.open = null;
+      saveState();
+      renderCallingPortal();
+      syncSingleOrder(o);
+      toast(`✅ Order ${o.no} marked as ${out}`);
+    }
+
+    function reopenOrder() {
+      const o = S.o.find(x => x.id === callerUI.open);
+      if (!o) return;
+      o.call = 'Pending Call';
+      delete o.reason;
+      o.at.push({ t: Date.now(), out: 'Reopened', note: 'Customer re-verified by ' + activeAgent, by: activeAgent });
+      callerUI.tab = 'Pending Call';
+      saveState();
+      renderCallingPortal();
+      syncSingleOrder(o);
+      toast(`Order ${o.no} moved back to Pending Call queue.`);
+    }
+
+    // -------------------------------------------------------------
+    // RENDER CALLING DESK UI
+    // -------------------------------------------------------------
+    function renderCallingPortal() {
+      const q = callerUI.q.toLowerCase();
+      
+      // Base filter by status tab and search
+      const tabOrders = S.o.filter(o => 
+        o.call === callerUI.tab &&
+        (!q || (o.no + o.cust + o.phone + o.item + o.addr).toLowerCase().includes(q))
+      );
+
+      const myOrders = tabOrders.filter(o => o.asg === activeAgent);
+      const filtered = callerUI.filterMode === 'assigned' ? myOrders : tabOrders;
+
+      const due = S.o.filter(o => o.call === 'Call Back Later' && o.cb <= Date.now()).length;
+      const dueBadge = $('#due-badge');
+      if (due > 0) {
+        dueBadge.style.display = 'inline-block';
+        dueBadge.textContent = `${due} Callbacks Due Now`;
+      } else {
+        dueBadge.style.display = 'none';
+      }
+
+      const activeOrder = S.o.find(o => o.id === callerUI.open && o.call === callerUI.tab);
+
+      const main = $('#main-content');
+      main.innerHTML = `
+      <div class="status-legend">
+        <span class="status-key"><i class="status-dot green"></i> Called & confirmed</span>
+        <span class="status-key"><i class="status-dot amber"></i> No answer / callback</span>
+        <span class="status-key"><i class="status-dot red"></i> Rejected / cancelled</span>
+        <span class="status-key"><i class="status-dot gray"></i> Pending queue</span>
+      </div>
+
+      <!-- Tab Buttons with Assigned Counts -->
+      <div class="row2" style="margin-bottom:12px">
+        ${TABS.map(tab => {
+          const totalInTab = S.o.filter(o => o.call === tab).length;
+          const myInTab = S.o.filter(o => o.call === tab && o.asg === activeAgent).length;
+          return `
+            <button class="pill ${COL[tab] || 'n'} ${callerUI.tab === tab ? 'on' : ''}" style="cursor:pointer;padding:6px 14px;font-size:13px;border:1px solid var(--bd)" onclick="callerUI.tab='${tab}';callerUI.open=null;renderCallingPortal()">
+              ${tab} (${totalInTab}${myInTab > 0 ? ` · <b>${myInTab} mine</b>` : ''})
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Caller View Toggle Bar (My Assigned vs All Orders) -->
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--cd);padding:10px 16px;border-radius:10px;border:1px solid var(--bd);margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn ${callerUI.filterMode === 'assigned' ? 'p' : ''}" style="padding:5px 14px;font-size:12.5px" onclick="callerUI.filterMode='assigned';renderCallingPortal()">
+            🎯 My Assigned Orders (${myOrders.length})
+          </button>
+          <button class="btn ${callerUI.filterMode === 'all' ? 'p' : ''}" style="padding:5px 14px;font-size:12.5px" onclick="callerUI.filterMode='all';renderCallingPortal()">
+            🌐 All Orders in Queue (${tabOrders.length})
+          </button>
+        </div>
+        <div class="k" style="font-size:12.5px">
+          Logged in as: <span style="background:var(--b-bg);color:var(--b-fg);padding:3px 8px;border-radius:6px;font-weight:700">👤 ${e(activeAgent)}</span>
+        </div>
+      </div>
+
+      <!-- Two-Column Queue & Detail Layout -->
+      <div class="two-col">
+        <!-- Left: Orders Queue -->
+        <div>
+          ${filtered.map(o => `
+            <div class="q-item ${callStatusClass(o.call)} ${o.id === callerUI.open ? 'on' : ''}" onclick="callerUI.open=${o.id};renderCallingPortal()">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <div>
+                  <b>#${o.no}</b>
+                  <span class="pill b" style="font-size:11px;margin-left:4px">Store ${o.store + 1}</span>
+                </div>
+                ${o.asg === activeAgent ? `
+                  <span class="pill g" style="font-size:11px;font-weight:700">👤 Assigned to You</span>
+                ` : o.asg ? `
+                  <span class="pill b" style="font-size:11px">👤 ${e(o.asg)}</span>
+                ` : `
+                  <span class="pill n" style="font-size:11px">Unassigned</span>
+                `}
+              </div>
+              <div style="font-weight:700;font-size:15px;margin:2px 0">${e(o.cust)}</div>
+              <div class="k" style="margin-bottom:4px">${e(o.item)} · <b>${R(o.cod)}</b></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+                <span class="pill ${COL[o.call] || 'n'}">${callStatusLabel(o.call)}</span>
+                <span class="k" style="font-weight:600">${e(o.phone)}</span>
+              </div>
+              <div class="call-actions" onclick="event.stopPropagation()">
+                ${phoneInfo(o.phone).valid ? `
+                  <a class="btn p phone-link" href="${phoneInfo(o.phone).href}" onclick="return callNow(${o.id})">☎ Call Now</a>
+                ` : `
+                  <button class="btn" disabled>Invalid Phone</button>
+                `}
+                <button class="btn sec" style="padding:4px 10px;font-size:12px" onclick="openEditOrderModal(${o.id})">✏️ Edit</button>
+                ${(!o.asg || o.asg !== activeAgent) ? `
+                  <button class="btn" style="padding:4px 8px;font-size:11.5px" onclick="claimOrder(${o.id})">✋ Take Order</button>
+                ` : ''}
+              </div>
+            </div>
+          `).join('') || `
+            <div class="card k" style="text-align:center;padding:34px">
+              <div style="font-size:24px;margin-bottom:8px">${callerUI.filterMode === 'assigned' ? '🎯' : '📦'}</div>
+              <b>${callerUI.filterMode === 'assigned' ? 'No orders currently assigned to you in this tab.' : 'No orders in this queue.'}</b>
+              ${callerUI.filterMode === 'assigned' && tabOrders.length > 0 ? `
+                <div style="margin-top:10px">
+                  <button class="btn sec" onclick="callerUI.filterMode='all';renderCallingPortal()">View All ${tabOrders.length} Orders in Queue</button>
+                </div>
+              ` : ''}
+            </div>
+          `}
+        </div>
+
+        <!-- Right: Active Customer Card -->
+        <div class="card">
+          ${activeOrder ? (() => {
+            const p = phoneInfo(activeOrder.phone);
+            return `
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                ${activeOrder.asg === activeAgent ? `
+                  <span class="pill g" style="font-size:12px;font-weight:700">✅ Assigned to You</span>
+                ` : activeOrder.asg ? `
+                  <span class="pill b" style="font-size:12px">👤 Assigned to: <b>${e(activeOrder.asg)}</b></span>
+                ` : `
+                  <span class="pill a" style="font-size:12px">⚠️ Unassigned Order</span>
+                `}
+                ${(!activeOrder.asg || activeOrder.asg !== activeAgent) ? `
+                  <button class="btn sec" style="padding:3px 10px;font-size:12px" onclick="claimOrder(${activeOrder.id})">✋ Assign to Me</button>
+                ` : ''}
+              </div>
+              <div class="k">Order ${activeOrder.no} · Store ${activeOrder.store + 1} · Placed ${T(activeOrder.t)}</div>
+              
+              <div class="row2" style="justify-content:space-between;align-items:center;margin-top:8px">
+                <h2 style="margin:0;font-size:24px">${e(activeOrder.cust)}</h2>
+                <button class="btn sec" onclick="openEditOrderModal(${activeOrder.id})">✏️ Edit Order Details</button>
+              </div>
+
+              <!-- Customer Info Box -->
+              <div style="background:var(--bg);padding:14px;border-radius:10px;margin:12px 0;border:1px solid var(--bd)">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                  <span class="k">Phone:</span>
+                  <b>${e(activeOrder.phone)}</b>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                  <span class="k">Delivery Address:</span>
+                  <span style="text-align:right;max-width:70%;font-weight:600">${e(activeOrder.addr)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                  <span class="k">Items Ordered:</span>
+                  <span style="text-align:right;max-width:70%;font-weight:600">${e(activeOrder.item)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--bd);padding-top:8px;margin-top:8px">
+                  <span class="k">COD Amount:</span>
+                  <span class="big g" style="font-size:22px">${R(activeOrder.cod)}</span>
+                </div>
+              </div>
+
+              <!-- Primary Call Trigger -->
+              <div class="call-actions" style="margin-bottom:14px">
+                ${p.valid ? `
+                  <a class="btn p phone-link" style="padding:10px 18px;font-size:15px" href="${p.href}" onclick="return callNow(${activeOrder.id})">☎ Call Now (${p.normalized})</a>
+                ` : `
+                  <button class="btn p" disabled>☎ Call Now</button>
+                  <span class="k" style="color:var(--r-fg)">Invalid Pakistani mobile number. Click Edit to fix.</span>
+                `}
+                <button class="btn sec" onclick="openEditOrderModal(${activeOrder.id})">✏️ Edit Address / Items</button>
+              </div>
+
+              <!-- Timeline -->
+              <div class="k" style="font-weight:700">Call & Attempt History</div>
+              <div class="tl">
+                ${activeOrder.at.map(a => `
+                  <div>
+                    <b>${e(a.out)}</b> · <span class="k">${e(a.by)}</span> · ${T(a.t)}
+                    ${a.note ? `<br><span class="k">${e(a.note)}</span>` : ''}
+                    ${a.callbackAt ? `<br><span class="history-meta">Callback: ${new Date(a.callbackAt).toLocaleString('en-PK')}</span>` : ''}
+                  </div>
+                `).join('') || '<div class="k">No call attempts recorded yet.</div>'}
+              </div>
+
+              <!-- Outcomes / Disposition Controls -->
+              ${activeOrder.call === 'Cancelled' ? `
+                <div class="card" style="background:var(--r-bg);color:var(--r-fg);border:none;margin-top:14px">
+                  <b>Cancelled:</b> ${e(activeOrder.reason || 'No reason specified')}
+                </div>
+                <button class="btn p" onclick="reopenOrder()">Reopen Order</button>
+              ` : `
+                <div style="margin-top:16px;border-top:1px solid var(--bd);padding-top:14px">
+                  <label class="k" style="font-weight:700">Call Notes / Customer Feedback</label>
+                  <textarea id="call-note" rows="2" style="width:100%;margin:6px 0 10px" placeholder="e.g. Customer confirmed delivery on Tuesday after 2 PM"></textarea>
+
+                  <div style="margin-bottom:10px">
+                    <label class="k" for="cbtime" style="font-weight:700">Schedule Callback (If Call Back Later)</label>
+                    <input class="callback-field" id="cbtime" type="datetime-local" min="${new Date(Date.now() + 60000).toISOString().slice(0, 16)}">
+                  </div>
+
+                  <div class="row2" style="margin-bottom:12px">
+                    <label class="k" for="cancel-reason" style="font-weight:700">Cancellation Reason (If Cancelling)</label>
+                    <select id="cancel-reason" style="width:100%">
+                      <option>Customer changed mind</option>
+                      <option>Duplicate order</option>
+                      <option>Wrong price or COD amount</option>
+                      <option>Fake / Invalid order</option>
+                      <option>Out of stock</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  <!-- Decision Action Buttons -->
+                  <div class="row2">
+                    <button class="btn p" style="padding:10px 18px" onclick="recordOutcome('Confirmed')">✅ Confirm Order</button>
+                    <button class="btn" onclick="recordOutcome('No Answer')">📵 No Answer</button>
+                    <button class="btn" onclick="recordOutcome('Call Back Later')">⏰ Call Back Later</button>
+                    <button class="btn" onclick="recordOutcome('Wrong Number')">❌ Wrong Number</button>
+                    <button class="btn" style="color:var(--r-fg)" onclick="recordOutcome('Cancelled')">🚫 Cancel Order</button>
+                  </div>
+                </div>
+              `}
+            `;
+          })() : `
+            <div style="text-align:center;padding:50px 20px" class="k">
+              <h3>👈 Select an order from the queue</h3>
+              <p>When you click an order, it locks to your desk so other callers don't dial the same customer.</p>
+            </div>
+          `}
+        </div>
+      </div>`;
+    }
+
+    // -------------------------------------------------------------
+    // BACKEND SERVER SYNC
+    // -------------------------------------------------------------
+    async function syncWithServer() {
+      toast('Syncing with central server...');
+      try {
+        const res = await fetch(`${backendUrl}/sync-state`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orders: S.o, audit: S.audit })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.orders && Array.isArray(data.orders)) {
+            S.o = data.orders;
+          }
+          saveState();
+          renderCallingPortal();
+          updateConnBadge(true);
+          toast(`✅ Synced with central database (${S.o.length} orders total)`);
+        } else {
+          throw new Error('Server returned ' + res.status);
+        }
+      } catch (err) {
+        updateConnBadge(false);
+        toast('⚠️ Server offline. Working in local mode.');
+      }
+    }
+
+    async function syncSingleOrder(o) {
+      if (!isConnected) return;
+      try {
+        await fetch(`${backendUrl}/orders/${o.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(o)
+        });
+      } catch (e) {}
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch(`${backendUrl}/health`, { signal: AbortSignal.timeout(2000) });
+        if (res.ok) updateConnBadge(true);
+        else updateConnBadge(false);
+      } catch (e) {
+        updateConnBadge(false);
+      }
+    }
+
+    function updateConnBadge(online) {
+      isConnected = online;
+      const dot = $('#conn-dot');
+      const txt = $('#conn-text');
+      if (!dot || !txt) return;
+      if (online) {
+        dot.style.background = '#10b981';
+        txt.textContent = 'Server Online';
+      } else {
+        dot.style.background = '#e3a008';
+        txt.textContent = 'Local Mode';
+      }
+    }
+
+    // Initial load
+    updateAgentDropdown();
+    renderCallingPortal();
+    checkHealth();
+    syncWithServer(); // Immediately pull fresh assignments from central server
+    setInterval(checkHealth, 15000); // Check server every 15s
+    setInterval(syncWithServer, 20000); // Periodic live sync for newly assigned orders
+  </script>
+</body>
+</html>

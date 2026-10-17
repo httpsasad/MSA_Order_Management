@@ -1,0 +1,18 @@
+{
+  "name": "msa-order-management-backend",
+  "version": "1.0.0",
+  "description": "Production Backend for MSA Order Management - Shopify Webhooks, Courier APIs (PostEx, Trax, Leopards), and Cloud Sync",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["shopify", "postex", "trax", "leopards", "cod-reconciliation", "pakistan-ecommerce"],
+  "author": "MSA",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
