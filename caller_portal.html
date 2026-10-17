@@ -279,7 +279,8 @@
       tab: 'Pending Call',
       open: null,
       q: '',
-      filterMode: 'assigned' // 'assigned' | 'all'
+      filterMode: 'all', // 'assigned' | 'all'
+      callSel: new Set()
     };
 
     function loadState() {
@@ -371,6 +372,127 @@
       });
       html += `<option value="__custom__">➕ Switch / Enter Email...</option>`;
       sel.innerHTML = html;
+    }
+
+    function getCallersList() {
+      const list = new Set(['bilalajmal7557@gmail.com', 'Sadia', 'Imran', 'Kamran', activeAgent]);
+      if (Array.isArray(S.o)) {
+        S.o.forEach(o => { if (o.asg) list.add(o.asg); });
+      }
+      return Array.from(list);
+    }
+
+    function getVisibleQueueOrders() {
+      const q = callerUI.q.toLowerCase();
+      const tabOrders = S.o.filter(o => 
+        o.call === callerUI.tab &&
+        (!q || (o.no + o.cust + o.phone + (o.asg || '') + o.item + o.addr).toLowerCase().includes(q))
+      );
+      if (callerUI.filterMode === 'assigned') {
+        return tabOrders.filter(o => o.asg === activeAgent);
+      }
+      return tabOrders;
+    }
+
+    function toggleCallSel(id) {
+      if (callerUI.callSel.has(id)) callerUI.callSel.delete(id);
+      else callerUI.callSel.add(id);
+      renderCallingPortal();
+    }
+
+    function selectQuickCount(count) {
+      const visible = getVisibleQueueOrders();
+      callerUI.callSel.clear();
+      visible.slice(0, count).forEach(o => callerUI.callSel.add(o.id));
+      renderCallingPortal();
+      toast(`Selected ${callerUI.callSel.size} orders`);
+    }
+
+    function selectAllFiltered() {
+      const visible = getVisibleQueueOrders();
+      visible.forEach(o => callerUI.callSel.add(o.id));
+      renderCallingPortal();
+      toast(`Selected all ${callerUI.callSel.size} matching orders`);
+    }
+
+    function toggleSelectAllVisible(checked) {
+      const visible = getVisibleQueueOrders();
+      if (checked) {
+        visible.forEach(o => callerUI.callSel.add(o.id));
+      } else {
+        callerUI.callSel.clear();
+      }
+      renderCallingPortal();
+    }
+
+    async function bulkAssignCaller(callerName) {
+      if (!callerName) return;
+      if (!callerUI.callSel.size) return toast('Please check at least 1 order using the checkboxes first.');
+
+      if (callerName === '__new__') {
+        const newCaller = prompt('Enter new caller email or name:');
+        if (!newCaller || !newCaller.trim()) return renderCallingPortal();
+        callerName = newCaller.trim();
+      }
+
+      const isUnassign = callerName === '__unassign__';
+      const targetLabel = isUnassign ? 'Unassigned' : callerName;
+      let count = 0;
+
+      callerUI.callSel.forEach(id => {
+        const o = S.o.find(x => x.id === id);
+        if (o) {
+          if (isUnassign) delete o.asg;
+          else o.asg = callerName;
+          o.at.push({
+            t: Date.now(),
+            out: 'Assigned',
+            note: isUnassign ? 'Order unassigned' : `Assigned to ${callerName}`,
+            by: activeAgent
+          });
+          count++;
+        }
+      });
+
+      callerUI.callSel.clear();
+      saveState();
+      updateAgentDropdown();
+      renderCallingPortal();
+      toast(`✅ Successfully assigned ${count} orders to ${targetLabel}!`);
+
+      try {
+        fetch(`${backendUrl}/sync-state`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orders: S.o, audit: S.audit })
+        });
+      } catch (e) {}
+    }
+
+    function inlineAssignOrder(id, callerName) {
+      const o = S.o.find(x => x.id === id);
+      if (!o) return;
+      if (!callerName || callerName === '__unassign__') {
+        delete o.asg;
+      } else {
+        o.asg = callerName;
+      }
+      o.at.push({
+        t: Date.now(),
+        out: 'Assigned',
+        note: o.asg ? `Assigned to ${o.asg}` : 'Order unassigned',
+        by: activeAgent
+      });
+      saveState();
+      renderCallingPortal();
+      toast(`Updated assignment for #${o.no}`);
+      try {
+        fetch(`${backendUrl}/orders/${o.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(o)
+        });
+      } catch (e) {}
     }
 
     function claimOrder(id) {
@@ -620,17 +742,54 @@
       </div>
 
       <!-- Caller View Toggle Bar (My Assigned vs All Orders) -->
-      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--cd);padding:10px 16px;border-radius:10px;border:1px solid var(--bd);margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--cd);padding:10px 16px;border-radius:10px;border:1px solid var(--bd);margin-bottom:12px;flex-wrap:wrap;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn ${callerUI.filterMode === 'assigned' ? 'p' : ''}" style="padding:5px 14px;font-size:12.5px" onclick="callerUI.filterMode='assigned';renderCallingPortal()">
-            🎯 My Assigned Orders (${myOrders.length})
-          </button>
           <button class="btn ${callerUI.filterMode === 'all' ? 'p' : ''}" style="padding:5px 14px;font-size:12.5px" onclick="callerUI.filterMode='all';renderCallingPortal()">
             🌐 All Orders in Queue (${tabOrders.length})
           </button>
+          <button class="btn ${callerUI.filterMode === 'assigned' ? 'p' : ''}" style="padding:5px 14px;font-size:12.5px" onclick="callerUI.filterMode='assigned';renderCallingPortal()">
+            🎯 My Assigned Orders (${myOrders.length})
+          </button>
         </div>
         <div class="k" style="font-size:12.5px">
-          Logged in as: <span style="background:var(--b-bg);color:var(--b-fg);padding:3px 8px;border-radius:6px;font-weight:700">👤 ${e(activeAgent)}</span>
+          Active Desk: <span style="background:var(--b-bg);color:var(--b-fg);padding:3px 8px;border-radius:6px;font-weight:700">👤 ${e(activeAgent)}</span>
+        </div>
+      </div>
+
+      <!-- Dark Bulk Action Bar (Exact Screenshot Match) -->
+      <div style="background:var(--sb);color:#cfd2d8;padding:12px 18px;border-radius:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <input type="checkbox" style="transform:scale(1.2);cursor:pointer" ${filtered.length > 0 && filtered.every(o => callerUI.callSel.has(o.id)) ? 'checked' : ''} onchange="toggleSelectAllVisible(this.checked)">
+          <span style="font-weight:700;font-size:13px;color:#fff">
+            selected · ${callerUI.callSel.size} on this page
+          </span>
+          <span style="color:#525866">|</span>
+          <span style="font-size:12px;color:#8b8f98">Quick Select:</span>
+          <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(5)">+5</button>
+          <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(10)">+10</button>
+          <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(20)">+20</button>
+          ${callerUI.callSel.size ? `<button class="btn" style="background:transparent;border:none;color:#f09090;padding:3px 8px;font-size:12px;cursor:pointer" onclick="callerUI.callSel.clear();renderCallingPortal()">✕ Clear</button>` : ''}
+        </div>
+
+        <!-- Dropdown: Assign to Caller (Exact Screenshot Match) -->
+        <div style="display:flex;align-items:center;gap:10px">
+          <select id="bulk-assign-dropdown" style="background:#1f222a;color:#fff;border:1px solid #3e4451;border-radius:8px;padding:7px 14px;font-weight:600;font-size:13px;min-width:220px;cursor:pointer" onchange="bulkAssignCaller(this.value);this.value='';">
+            <option value="">Assign to caller...</option>
+            ${getCallersList().map(c => `<option value="${e(c)}">👤 ${e(c)}</option>`).join('')}
+            <option value="__unassign__">❌ Unassign Selected</option>
+            <option value="__new__">➕ Add New Caller (Email/Name)...</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Register Count Bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 4px 12px;font-size:12.5px;color:var(--mu)">
+        <div>
+          <b style="color:var(--tx)">Register</b> ${filtered.length} matching · page 1 of 1
+        </div>
+        <div style="display:flex;gap:16px;align-items:center">
+          <a style="cursor:pointer;color:var(--g);font-weight:700" onclick="selectAllFiltered()">☑ Select all ${filtered.length} filtered</a>
+          <a style="cursor:pointer;color:var(--tx);font-weight:600" onclick="syncWithServer()">🔄 Refresh / Sync</a>
         </div>
       </div>
 
@@ -639,11 +798,12 @@
         <!-- Left: Orders Queue -->
         <div>
           ${filtered.map(o => `
-            <div class="q-item ${callStatusClass(o.call)} ${o.id === callerUI.open ? 'on' : ''}" onclick="callerUI.open=${o.id};renderCallingPortal()">
+            <div class="q-item ${callStatusClass(o.call)} ${o.id === callerUI.open ? 'on' : ''} ${callerUI.callSel.has(o.id) ? 'on' : ''}" onclick="callerUI.open=${o.id};renderCallingPortal()">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-                <div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input type="checkbox" style="transform:scale(1.2);cursor:pointer" ${callerUI.callSel.has(o.id) ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleCallSel(${o.id})">
                   <b>#${o.no}</b>
-                  <span class="pill b" style="font-size:11px;margin-left:4px">Store ${o.store + 1}</span>
+                  <span class="pill b" style="font-size:11px">Store ${o.store + 1}</span>
                 </div>
                 ${o.asg === activeAgent ? `
                   <span class="pill g" style="font-size:11px;font-weight:700">👤 Assigned to You</span>
@@ -653,13 +813,13 @@
                   <span class="pill n" style="font-size:11px">Unassigned</span>
                 `}
               </div>
-              <div style="font-weight:700;font-size:15px;margin:2px 0">${e(o.cust)}</div>
-              <div class="k" style="margin-bottom:4px">${e(o.item)} · <b>${R(o.cod)}</b></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+              <div style="font-weight:700;font-size:15px;margin:2px 0 2px 26px">${e(o.cust)}</div>
+              <div class="k" style="margin:0 0 4px 26px">${e(o.item)} · <b>${R(o.cod)}</b></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 0 26px">
                 <span class="pill ${COL[o.call] || 'n'}">${callStatusLabel(o.call)}</span>
                 <span class="k" style="font-weight:600">${e(o.phone)}</span>
               </div>
-              <div class="call-actions" onclick="event.stopPropagation()">
+              <div class="call-actions" style="margin-left:26px" onclick="event.stopPropagation()">
                 ${phoneInfo(o.phone).valid ? `
                   <a class="btn p phone-link" href="${phoneInfo(o.phone).href}" onclick="return callNow(${o.id})">☎ Call Now</a>
                 ` : `
@@ -726,6 +886,16 @@
                   <span class="k">COD Amount:</span>
                   <span class="big g" style="font-size:22px">${R(activeOrder.cod)}</span>
                 </div>
+              </div>
+
+              <!-- Reassign / Change Caller for Single Order -->
+              <div style="margin:12px 0;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--bd)">
+                <span class="k" style="font-weight:700">Assign to Caller:</span>
+                <select style="width:100%;margin-top:4px" onchange="inlineAssignOrder(${activeOrder.id}, this.value)">
+                  <option value="">Select caller...</option>
+                  ${getCallersList().map(c => `<option value="${e(c)}" ${activeOrder.asg === c ? 'selected' : ''}>👤 ${e(c)}</option>`).join('')}
+                  <option value="__unassign__">❌ Unassign</option>
+                </select>
               </div>
 
               <!-- Primary Call Trigger -->

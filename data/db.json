@@ -12,14 +12,14 @@
       "call": "Pending Call",
       "at": [
         {
-          "t": 1792238743078,
+          "t": 1792241595132,
           "out": "Assigned",
-          "note": "Assigned to bilalajmal7557@gmail.com",
-          "by": "Admin"
+          "note": "Claimed by bilalajmal7557@gmail.com",
+          "by": "bilalajmal7557@gmail.com"
         }
       ],
       "ship": null,
-      "t": 1791115495272,
+      "t": 1791113609667,
       "asg": "bilalajmal7557@gmail.com"
     },
     {
@@ -32,17 +32,9 @@
       "item": "Khussa · 39",
       "cod": 2550,
       "call": "Pending Call",
-      "at": [
-        {
-          "t": 1792238743078,
-          "out": "Assigned",
-          "note": "Assigned to bilalajmal7557@gmail.com",
-          "by": "Admin"
-        }
-      ],
+      "at": [],
       "ship": null,
-      "t": 1791158695272,
-      "asg": "bilalajmal7557@gmail.com"
+      "t": 1791156809667
     },
     {
       "id": 2,
@@ -54,17 +46,9 @@
       "item": "Bedsheet · King",
       "cod": 3250,
       "call": "Pending Call",
-      "at": [
-        {
-          "t": 1792238743078,
-          "out": "Assigned",
-          "note": "Assigned to bilalajmal7557@gmail.com",
-          "by": "Admin"
-        }
-      ],
+      "at": [],
       "ship": null,
-      "t": 1791201895272,
-      "asg": "bilalajmal7557@gmail.com"
+      "t": 1791200009667
     },
     {
       "id": 3,
@@ -76,17 +60,9 @@
       "item": "Kurta · L",
       "cod": 4000,
       "call": "Pending Call",
-      "at": [
-        {
-          "t": 1792238743078,
-          "out": "Assigned",
-          "note": "Assigned to bilalajmal7557@gmail.com",
-          "by": "Admin"
-        }
-      ],
+      "at": [],
       "ship": null,
-      "t": 1791245095272,
-      "asg": "bilalajmal7557@gmail.com"
+      "t": 1791243209667
     },
     {
       "id": 4,
@@ -98,17 +74,9 @@
       "item": "Handbag · Tan",
       "cod": 4700,
       "call": "Pending Call",
-      "at": [
-        {
-          "t": 1792238743078,
-          "out": "Assigned",
-          "note": "Assigned to bilalajmal7557@gmail.com",
-          "by": "Admin"
-        }
-      ],
+      "at": [],
       "ship": null,
-      "t": 1791288295272,
-      "asg": "bilalajmal7557@gmail.com"
+      "t": 1791286409667
     },
     {
       "id": 5,
@@ -122,7 +90,7 @@
       "call": "Pending Call",
       "at": [],
       "ship": null,
-      "t": 1791331495272
+      "t": 1791329609667
     },
     {
       "id": 6,
@@ -136,14 +104,14 @@
       "call": "No Answer",
       "at": [
         {
-          "t": 1791378295272,
+          "t": 1791376409667,
           "out": "No Answer",
           "note": "",
           "by": "Caller"
         }
       ],
       "ship": null,
-      "t": 1791374695272
+      "t": 1791372809667
     },
     {
       "id": 7,
@@ -157,15 +125,15 @@
       "call": "Call Back Later",
       "at": [
         {
-          "t": 1791421495272,
+          "t": 1791419609667,
           "out": "Call Back Later",
           "note": "",
           "by": "Caller"
         }
       ],
       "ship": null,
-      "t": 1791417895272,
-      "cb": 1792235095272
+      "t": 1791416009667,
+      "cb": 1792233209667
     },
     {
       "id": 8,
@@ -179,14 +147,14 @@
       "call": "Cancelled",
       "at": [
         {
-          "t": 1791464695272,
+          "t": 1791462809667,
           "out": "Cancelled",
           "note": "",
           "by": "Caller"
         }
       ],
       "ship": null,
-      "t": 1791461095272
+      "t": 1791459209667
     },
     {
       "id": 9,
@@ -200,14 +168,14 @@
       "call": "Wrong Number",
       "at": [
         {
-          "t": 1791507895272,
+          "t": 1791506009667,
           "out": "Wrong Number",
           "note": "",
           "by": "Caller"
         }
       ],
       "ship": null,
-      "t": 1791504295272
+      "t": 1791502409667
     },
     {
       "id": 10,
@@ -221,14 +189,14 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791551095272,
+          "t": 1791549209667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
         }
       ],
       "ship": null,
-      "t": 1791547495272
+      "t": 1791545609667
     },
     {
       "id": 11,
@@ -242,14 +210,14 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791594295272,
+          "t": 1791592409667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
         }
       ],
       "ship": null,
-      "t": 1791590695272
+      "t": 1791588809667
     },
     {
       "id": 12,
@@ -263,7 +231,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791637495272,
+          "t": 1791635609667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -275,7 +243,7 @@
         "err": "Consignee city not recognised by courier",
         "ev": []
       },
-      "t": 1791633895272
+      "t": 1791632009667
     },
     {
       "id": 13,
@@ -289,7 +257,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791680695272,
+          "t": 1791678809667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -303,13 +271,13 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791720295272
+            "t": 1791718409667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1791677095272
+      "t": 1791675209667
     },
     {
       "id": 14,
@@ -323,7 +291,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791723895272,
+          "t": 1791722009667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -337,13 +305,13 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791763495272
+            "t": 1791761609667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1791720295272
+      "t": 1791718409667
     },
     {
       "id": 15,
@@ -357,7 +325,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791767095272,
+          "t": 1791765209667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -371,18 +339,18 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791806695272
+            "t": 1791804809667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1791875815272
+            "t": 1791873929667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1791763495272
+      "t": 1791761609667
     },
     {
       "id": 16,
@@ -396,7 +364,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791810295272,
+          "t": 1791808409667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -410,18 +378,18 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791849895272
+            "t": 1791848009667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1791919015272
+            "t": 1791917129667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1791806695272
+      "t": 1791804809667
     },
     {
       "id": 17,
@@ -435,7 +403,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791853495272,
+          "t": 1791851609667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -449,18 +417,18 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791893095272
+            "t": 1791891209667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1791962215272
+            "t": 1791960329667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1791849895272
+      "t": 1791848009667
     },
     {
       "id": 18,
@@ -474,7 +442,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791896695272,
+          "t": 1791894809667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -488,23 +456,23 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791936295272
+            "t": 1791934409667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1792005415272
+            "t": 1792003529667
           },
           {
             "s": "Out for Delivery",
             "raw": "With rider",
-            "t": 1792074535272
+            "t": 1792072649667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1791893095272
+      "t": 1791891209667
     },
     {
       "id": 19,
@@ -518,7 +486,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791939895272,
+          "t": 1791938009667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -532,28 +500,28 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1791979495272
+            "t": 1791977609667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1792048615272
+            "t": 1792046729667
           },
           {
             "s": "Out for Delivery",
             "raw": "With rider",
-            "t": 1792117735272
+            "t": 1792115849667
           },
           {
             "s": "Delivered",
             "raw": "Delivered to consignee",
-            "t": 1792186855272
+            "t": 1792184969667
           }
         ],
         "rep": 5250,
         "rec": 5250
       },
-      "t": 1791936295272
+      "t": 1791934409667
     },
     {
       "id": 20,
@@ -567,7 +535,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1791983095272,
+          "t": 1791981209667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -581,28 +549,28 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1792022695272
+            "t": 1792020809667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1792091815272
+            "t": 1792089929667
           },
           {
             "s": "Out for Delivery",
             "raw": "With rider",
-            "t": 1792160935272
+            "t": 1792159049667
           },
           {
             "s": "Delivered",
             "raw": "Delivered to consignee",
-            "t": 1792230055272
+            "t": 1792228169667
           }
         ],
         "rep": 5800,
         "rec": 5800
       },
-      "t": 1791979495272
+      "t": 1791977609667
     },
     {
       "id": 21,
@@ -616,7 +584,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1792026295272,
+          "t": 1792024409667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -630,28 +598,28 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1792065895272
+            "t": 1792064009667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1792135015272
+            "t": 1792133129667
           },
           {
             "s": "Out for Delivery",
             "raw": "With rider",
-            "t": 1792204135272
+            "t": 1792202249667
           },
           {
             "s": "Delivered",
             "raw": "Delivered to consignee",
-            "t": 1792273255272
+            "t": 1792271369667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1792022695272
+      "t": 1792020809667
     },
     {
       "id": 22,
@@ -665,7 +633,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1792069495272,
+          "t": 1792067609667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -679,23 +647,23 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1792109095272
+            "t": 1792107209667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1792178215272
+            "t": 1792176329667
           },
           {
             "s": "Return in Transit",
             "raw": "Return initiated",
-            "t": 1792247335272
+            "t": 1792245449667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1792065895272
+      "t": 1792064009667
     },
     {
       "id": 23,
@@ -709,7 +677,7 @@
       "call": "Confirmed",
       "at": [
         {
-          "t": 1792112695272,
+          "t": 1792110809667,
           "out": "Confirmed",
           "note": "",
           "by": "Caller"
@@ -723,31 +691,356 @@
           {
             "s": "Booked",
             "raw": "Order booked",
-            "t": 1792152295272
+            "t": 1792150409667
           },
           {
             "s": "In Transit",
             "raw": "Arrived at hub",
-            "t": 1792221415272
+            "t": 1792219529667
           },
           {
             "s": "Return in Transit",
             "raw": "Return initiated",
-            "t": 1792290535272
+            "t": 1792288649667
           },
           {
             "s": "Returned to Sender",
             "raw": "Returned to shipper",
-            "t": 1792359655272
+            "t": 1792357769667
           }
         ],
         "rep": null,
         "rec": null
       },
-      "t": 1792109095272
+      "t": 1792107209667
     }
   ],
   "audit": [
+    {
+      "t": 1792244089410,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
+    {
+      "t": 1792238743078,
+      "by": "Admin",
+      "a": "Assigned 5 orders to bilalajmal7557@gmail.com"
+    },
     {
       "t": 1792238743078,
       "by": "Admin",

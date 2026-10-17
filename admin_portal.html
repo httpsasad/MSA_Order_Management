@@ -515,15 +515,13 @@ async function bulkAssignCaller(callerName){
   draw();
   toast(`✅ Successfully assigned ${count} orders to ${targetLabel}!`);
 
-  if(isBackendConnected){
-    try {
-      fetch(`${backendUrl}/sync-state`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orders: S.o, audit: S.audit })
-      });
-    } catch(e) {}
-  }
+  try {
+    fetch(`${backendUrl}/sync-state`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orders: S.o, audit: S.audit })
+    });
+  } catch(e) {}
 }
 
 function inlineAssignOrder(id, callerName){
@@ -543,15 +541,13 @@ function inlineAssignOrder(id, callerName){
   save();
   draw();
   toast(`Updated assignment for #${o.no}`);
-  if(isBackendConnected){
-    try {
-      fetch(`${backendUrl}/orders/${o.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(o)
-      });
-    } catch(e) {}
-  }
+  try {
+    fetch(`${backendUrl}/orders/${o.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(o)
+    });
+  } catch(e) {}
 }
 
 const CALL_TABS = ['Pending Call', 'Confirmed', 'Call Back Later', 'No Answer', 'Wrong Number', 'Cancelled', 'All'];

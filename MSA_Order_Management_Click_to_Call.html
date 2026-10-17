@@ -453,38 +453,342 @@ async function saveEditedOrder(id){
   }
 }
 
+function getCallingFilteredOrders(){
+  const q = ui.q.toLowerCase();
+  return S.o.filter(o => {
+    if(ui.tab !== 'All' && o.call !== ui.tab) return false;
+    if(ui.asgFilter === 'unassigned' && o.asg) return false;
+    if(ui.asgFilter !== 'all' && ui.asgFilter !== 'unassigned' && o.asg !== ui.asgFilter) return false;
+    if(q && !(o.no + o.cust + o.phone + (o.asg || '') + o.item + o.addr).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function toggleCallSel(id){
+  if(ui.callSel.has(id)) ui.callSel.delete(id);
+  else ui.callSel.add(id);
+  draw();
+}
+
+function selectQuickCount(count){
+  const visible = getCallingFilteredOrders();
+  ui.callSel.clear();
+  visible.slice(0, count).forEach(o => ui.callSel.add(o.id));
+  draw();
+  toast(`Selected ${ui.callSel.size} orders`);
+}
+
+function selectAllFiltered(){
+  const visible = getCallingFilteredOrders();
+  visible.forEach(o => ui.callSel.add(o.id));
+  draw();
+  toast(`Selected all ${ui.callSel.size} matching orders`);
+}
+
+function toggleSelectAllVisible(checked){
+  const visible = getCallingFilteredOrders();
+  if(checked){
+    visible.forEach(o => ui.callSel.add(o.id));
+  } else {
+    ui.callSel.clear();
+  }
+  draw();
+}
+
+async function bulkAssignCaller(callerName){
+  if(!callerName) return;
+  if(!ui.callSel.size) return toast('Please check at least 1 order using the checkboxes first.');
+
+  if(callerName === '__new__'){
+    const newCaller = prompt('Enter new caller email or name:');
+    if(!newCaller || !newCaller.trim()) return draw();
+    const name = newCaller.trim();
+    if(!S.staff.some(s => s.n.toLowerCase() === name.toLowerCase())){
+      S.staff.push({ n: name, r: 'Caller', a: 1 });
+    }
+    callerName = name;
+  }
+
+  const isUnassign = callerName === '__unassign__';
+  const targetLabel = isUnassign ? 'Unassigned' : callerName;
+  let count = 0;
+
+  ui.callSel.forEach(id => {
+    const o = S.o.find(x => x.id === id);
+    if(o){
+      if(isUnassign) delete o.asg;
+      else o.asg = callerName;
+      o.at.push({
+        t: Date.now(),
+        out: 'Assigned',
+        note: isUnassign ? 'Order unassigned' : `Assigned to ${callerName}`,
+        by: ui.role
+      });
+      count++;
+    }
+  });
+
+  log(`Assigned ${count} orders to ${targetLabel}`);
+  ui.callSel.clear();
+  save();
+  draw();
+  toast(`✅ Successfully assigned ${count} orders to ${targetLabel}!`);
+
+  if(isBackendConnected){
+    try {
+      fetch(`${backendUrl}/sync-state`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orders: S.o, audit: S.audit })
+      });
+    } catch(e) {}
+  }
+}
+
+function inlineAssignOrder(id, callerName){
+  const o = S.o.find(x => x.id === id);
+  if(!o) return;
+  if(!callerName || callerName === '__unassign__') {
+    delete o.asg;
+  } else {
+    o.asg = callerName;
+  }
+  o.at.push({
+    t: Date.now(),
+    out: 'Assigned',
+    note: o.asg ? `Assigned to ${o.asg}` : 'Order unassigned',
+    by: ui.role
+  });
+  save();
+  draw();
+  toast(`Updated assignment for #${o.no}`);
+  if(isBackendConnected){
+    try {
+      fetch(`${backendUrl}/orders/${o.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(o)
+      });
+    } catch(e) {}
+  }
+}
+
+const CALL_TABS = ['Pending Call', 'Confirmed', 'Call Back Later', 'No Answer', 'Wrong Number', 'Cancelled', 'All'];
+
 V.calling=()=>{
-  const L=list().filter(o=>o.call==ui.tab),due=S.o.filter(o=>o.call=='Call Back Later'&&o.cb<=Date.now()).length;
-  let O=S.o.find(o=>o.id==ui.open&&o.call==ui.tab)||null;
-  return`<div class="row2"><h2 style="margin:0;flex:1">Calling Team</h2>${pill('Callbacks due: '+due,'a')}${pill(ui.role)}</div><div class="status-legend"><span class="status-key"><i class="status-dot green"></i> Called & confirmed</span><span class="status-key"><i class="status-dot amber"></i> No answer / callback / correction</span><span class="status-key"><i class="status-dot red"></i> Rejected / cancelled / wrong number</span><span class="status-key"><i class="status-dot gray"></i> Other / pending status</span></div><div class="row2">${TABS.map(t=>`<button class="pill ${COL[t]} ${ui.tab==t?'on':''}" onclick="ui.tab='${t}';ui.open=null;draw()">${t} (${S.o.filter(o=>o.call==t).length})</button>`).join('')}</div>
-  <div class="two" style="grid-template-columns:1fr 1.6fr"><div>${L.map(o=>`<div class="q ${callStatusClass(o.call)} ${o.id==ui.open?'on':''}" onclick="ui.open=${o.id};draw()"><b>#${o.no}</b> <span class="pill b" style="float:right">Store ${o.store+1}</span><br>${e(o.cust)} · ${R(o.cod)}<br>${pill(callStatusLabel(o.call),COL[o.call]||'n')} <span class="k">${e(o.phone)}</span><div class="call-actions" onclick="event.stopPropagation()">${phoneInfo(o.phone).valid?`<a class="btn p phone-link" href="${phoneInfo(o.phone).href}" onclick="return callNow(${o.id})">☎ Call Now</a>`:`<button class="btn" disabled>Invalid phone</button>`}<button class="btn sec" style="padding:4px 10px;font-size:12px" onclick="openEditOrderModal(${o.id})">✏️ Edit</button></div></div>`).join('')||'<div class="k">Queue is empty. New orders appear after the next store sync.</div>'}</div>
-  <div class="card">${O?(()=>{const p=phoneInfo(O.phone);return`<span class="pill a lock">Locked: you are on this order</span>
-  <div class="row2" style="justify-content:space-between;align-items:center;margin-top:6px">
-    <h3 style="font-size:22px;margin:0">${e(O.cust)}</h3>
-    <button class="btn sec" style="padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:5px" onclick="openEditOrderModal(${O.id})">✏️ Edit Details</button>
-  </div>
-  <div class="row2">${pill(callStatusLabel(O.call),COL[O.call]||'n')} ${pill(O.call,COL[O.call]||'n')}</div>
-  <div class="k">Order ${O.no} · Store ${O.store+1}</div>
-  <div style="background:var(--bg);padding:12px 14px;border-radius:10px;margin:12px 0;border:1px solid var(--bd)">
-    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-      <span class="k">Customer Phone:</span><b>${e(O.phone)}</b>
-    </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-      <span class="k">Delivery Address:</span><span style="text-align:right;max-width:70%;font-weight:500">${e(O.addr)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-      <span class="k">Ordered Item(s):</span><span style="text-align:right;max-width:70%;font-weight:500">${e(O.item)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--bd);padding-top:8px;margin-top:8px">
-      <span class="k">COD Amount:</span><b class="big g" style="font-size:20px">${R(O.cod)}</b>
+  const L = getCallingFilteredOrders();
+  const due = S.o.filter(o => o.call == 'Call Back Later' && o.cb <= Date.now()).length;
+  let O = S.o.find(o => o.id == ui.open);
+  const callers = (S.staff || []).filter(s => s.r === 'Caller' && s.a);
+  const isAllSelected = L.length > 0 && L.every(o => ui.callSel.has(o.id));
+
+  return`
+  <!-- Top Bar -->
+  <div class="row2" style="margin-bottom:12px;justify-content:space-between">
+    <div>
+      <h2 style="margin:0;display:inline-block">Calling Team & Order Allocation</h2>
+      <span class="pill a" style="margin-left:8px">Callbacks due: ${due}</span>
     </div>
   </div>
-  <div class="call-actions">${p.valid?`<a class="btn p phone-link" href="${p.href}" onclick="return callNow(${O.id})">☎ Call Now</a>`:`<button class="btn p" disabled>☎ Call Now</button><span class="k" style="color:var(--r-fg)">Invalid Pakistan mobile number — correct the number before calling.</span>`}<button class="btn sec" onclick="openEditOrderModal(${O.id})">✏️ Edit Customer / Address / Items / COD</button></div>
-  ${O.cb?`<p class="k">Scheduled callback: <b>${callbackValue(O)}</b></p>`:''}
-  ${O.corr?pill('Correction requested','a'):''}
-  <div class="k">Call & callback history</div>
-  <div class="tl">${O.at.map(a=>`<div><b>${e(a.out)}</b> · ${e(a.by)} · ${T(a.t)}${a.note?' — '+e(a.note):''}${a.callbackAt?'<br><span class=history-meta>Callback scheduled: '+e(new Date(a.callbackAt).toLocaleString('en-PK'))+'</span>':''}</div>`).join('')||'<div class=k>No attempts yet</div>'}</div>
-  ${O.call=='Cancelled'?`<p>${pill('Cancelled','r')} ${e(O.reason||'No reason recorded')}</p><button class="btn p" onclick="reopen()">Reopen order</button>`:`<textarea id="note" rows=3 style="width:100%" placeholder="Call notes / customer response"></textarea><label class="k" for="cbtime">Callback date & time (required for callback)</label><input class="callback-field" id="cbtime" type="datetime-local" min="${new Date(Date.now()+60000).toISOString().slice(0,16)}"><div class="row2"><label class="k" for="cr">Reason if cancelling</label><select id="cr"><option>Customer changed mind</option><option>Duplicate order</option><option>Wrong price or COD amount</option><option>Out of stock</option><option>Other</option></select></div><div class="row2"><button class="btn p" onclick="act('Confirmed')">Confirmed</button>${['Cancelled','No Answer','Call Back Later','Wrong Number','Request correction'].map(x=>`<button class="btn" onclick="act('${x}')">${x==='Cancelled'?'Cancel order':x}</button>`).join('')}</div>`}`})():'<div class="k">Pick an order from the queue. It locks to you so nobody else calls the same customer.</div>'}</div></div>`;
+
+  <div class="status-legend">
+    <span class="status-key"><i class="status-dot green"></i> Called & confirmed</span>
+    <span class="status-key"><i class="status-dot amber"></i> No answer / callback</span>
+    <span class="status-key"><i class="status-dot red"></i> Rejected / cancelled</span>
+    <span class="status-key"><i class="status-dot gray"></i> Pending queue</span>
+  </div>
+
+  <!-- Queue Filter Tabs & Caller Dropdown -->
+  <div class="row2" style="margin-bottom:14px">
+    ${CALL_TABS.map(t => `
+      <button class="pill ${COL[t] || 'n'} ${ui.tab === t ? 'on' : ''}" style="cursor:pointer;padding:6px 14px;font-size:12.5px;border:1px solid var(--bd)" onclick="ui.tab='${t}';ui.open=null;draw()">
+        ${t} (${t === 'All' ? S.o.length : S.o.filter(o => o.call === t).length})
+      </button>
+    `).join('')}
+
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <span class="k" style="font-weight:700">Filter by Caller:</span>
+      <select onchange="ui.asgFilter=this.value;draw()" style="padding:6px 10px;font-size:12.5px">
+        <option value="all">All Callers & Unassigned</option>
+        <option value="unassigned" ${ui.asgFilter === 'unassigned' ? 'selected' : ''}>Unassigned Only</option>
+        ${callers.map(c => `<option value="${e(c.n)}" ${ui.asgFilter === c.n ? 'selected' : ''}>${e(c.n)}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <!-- Dark Bulk Action Bar (Matching Screenshot) -->
+  <div style="background:var(--sb);color:#cfd2d8;padding:12px 18px;border-radius:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <input type="checkbox" style="transform:scale(1.2);cursor:pointer" ${isAllSelected ? 'checked' : ''} onchange="toggleSelectAllVisible(this.checked)">
+      <span style="font-weight:700;font-size:13px;color:#fff">
+        selected · ${ui.callSel.size} on this page
+      </span>
+      <span style="color:#525866">|</span>
+      <span style="font-size:12px;color:#8b8f98">Quick Select:</span>
+      <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(5)">+5</button>
+      <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(10)">+10</button>
+      <button class="btn" style="background:#23262d;border:1px solid #3a3f4b;color:#fff;padding:3px 10px;font-size:12px" onclick="selectQuickCount(20)">+20</button>
+      ${ui.callSel.size ? `<button class="btn" style="background:transparent;border:none;color:#f09090;padding:3px 8px;font-size:12px;cursor:pointer" onclick="ui.callSel.clear();draw()">✕ Clear</button>` : ''}
+    </div>
+
+    <!-- Dropdown: Assign to Caller (Matching Screenshot) -->
+    <div style="display:flex;align-items:center;gap:10px">
+      <select id="bulk-assign-dropdown" style="background:#1f222a;color:#fff;border:1px solid #3e4451;border-radius:8px;padding:7px 14px;font-weight:600;font-size:13px;min-width:220px;cursor:pointer" onchange="bulkAssignCaller(this.value);this.value='';">
+        <option value="">Assign to caller...</option>
+        ${callers.map(c => `<option value="${e(c.n)}">👤 ${e(c.n)}</option>`).join('')}
+        <option value="__unassign__">❌ Unassign Selected</option>
+        <option value="__new__">➕ Add New Caller (Email/Name)...</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Register Count Bar (From Screenshot) -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 4px 10px;font-size:12.5px;color:var(--mu)">
+    <div>
+      <b style="color:var(--tx)">Register</b> ${L.length} matching · page 1 of 1
+    </div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a style="cursor:pointer;color:var(--g);font-weight:700" onclick="selectAllFiltered()">☑ Select all ${L.length} filtered</a>
+      <a style="cursor:pointer;color:var(--tx);font-weight:600" onclick="draw()">🔄 Refresh</a>
+    </div>
+  </div>
+
+  <!-- Table & Detail Grid -->
+  <div class="two" style="grid-template-columns:1.8fr 1.2fr">
+    <!-- Left Table -->
+    <div class="card tw" style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--bd);background:var(--bg)">
+            <th style="width:36px;padding:10px 12px">
+              <input type="checkbox" ${isAllSelected ? 'checked' : ''} onchange="toggleSelectAllVisible(this.checked)">
+            </th>
+            <th style="padding:10px 10px">ORDER</th>
+            <th style="padding:10px 10px">STORE / CUSTOMER</th>
+            <th style="padding:10px 10px">COD</th>
+            <th style="padding:10px 10px">CALL</th>
+            <th style="padding:10px 10px">ASSIGNED TO</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${L.map(o => `
+            <tr class="row ${o.id === ui.open ? 'sel' : ''} ${ui.callSel.has(o.id) ? 'sel' : ''}" onclick="ui.open=${o.id};draw()">
+              <td onclick="event.stopPropagation()" style="padding:10px 12px">
+                <input type="checkbox" style="transform:scale(1.1);cursor:pointer" ${ui.callSel.has(o.id) ? 'checked' : ''} onchange="toggleCallSel(${o.id})">
+              </td>
+              <td style="padding:10px 10px">
+                <b>${o.no}</b><br>
+                <span class="k" style="font-size:11.5px">${T(o.t)}</span>
+              </td>
+              <td style="padding:10px 10px">
+                <span class="k" style="font-weight:600">Store ${o.store + 1}</span><br>
+                <b>${e(o.cust)}</b>
+              </td>
+              <td style="padding:10px 10px">
+                <b>${R(o.cod)}</b>
+              </td>
+              <td style="padding:10px 10px">
+                ${pill(callStatusLabel(o.call), COL[o.call] || 'n')}
+              </td>
+              <td onclick="event.stopPropagation()" style="padding:10px 10px">
+                ${o.asg ? `
+                  <span style="display:inline-flex;align-items:center;gap:6px;background:var(--b-bg);color:var(--b-fg);padding:3px 9px;border-radius:6px;font-size:12px;font-weight:600">
+                    <span style="background:var(--b-fg);color:#fff;width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">
+                      ${o.asg.charAt(0).toUpperCase()}
+                    </span>
+                    ${e(o.asg)}
+                  </span>
+                ` : `
+                  <span class="pill n" style="font-size:11px">Unassigned</span>
+                `}
+              </td>
+            </tr>
+          `).join('') || '<tr><td colspan=6 style="text-align:center;padding:24px" class="k">No orders found matching this filter.</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right Detail Card -->
+    <div class="card">
+      ${O ? (() => {
+        const p = phoneInfo(O.phone);
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            ${O.asg ? `
+              <span class="pill b" style="font-size:12px">👤 Assigned to: <b>${e(O.asg)}</b></span>
+            ` : `
+              <span class="pill a" style="font-size:12px">⚠️ Unassigned</span>
+            `}
+            <button class="btn sec" style="padding:4px 10px;font-size:12px" onclick="openEditOrderModal(${O.id})">✏️ Edit Order</button>
+          </div>
+
+          <h3 style="font-size:22px;margin:8px 0 4px">${e(O.cust)}</h3>
+          <div class="k">Order ${O.no} · Store ${O.store + 1} · Placed ${T(O.t)}</div>
+
+          <div style="background:var(--bg);padding:12px 14px;border-radius:10px;margin:12px 0;border:1px solid var(--bd)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="k">Phone:</span><b>${e(O.phone)}</b>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="k">Address:</span><span style="text-align:right;max-width:70%;font-weight:500">${e(O.addr)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span class="k">Items:</span><span style="text-align:right;max-width:70%;font-weight:500">${e(O.item)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--bd);padding-top:8px;margin-top:8px">
+              <span class="k">COD Amount:</span><b class="big g" style="font-size:20px">${R(O.cod)}</b>
+            </div>
+          </div>
+
+          <div class="call-actions">
+            ${p.valid ? `
+              <a class="btn p phone-link" href="${p.href}" onclick="return callNow(${O.id})">☎ Call Now</a>
+            ` : `
+              <button class="btn p" disabled>☎ Call Now</button>
+              <span class="k" style="color:var(--r-fg)">Invalid phone number</span>
+            `}
+            <button class="btn" onclick="openEditOrderModal(${O.id})">✏️ Edit Details</button>
+          </div>
+
+          <!-- Assign / Reassign Single Order Dropdown -->
+          <div style="margin:12px 0;padding:10px;background:var(--bg);border-radius:8px">
+            <span class="k" style="font-weight:700">Change Assignee:</span>
+            <select style="width:100%;margin-top:4px" onchange="inlineAssignOrder(${O.id}, this.value)">
+              <option value="">Select caller...</option>
+              ${callers.map(c => `<option value="${e(c.n)}" ${O.asg === c.n ? 'selected' : ''}>👤 ${e(c.n)}</option>`).join('')}
+              <option value="__unassign__">❌ Unassign</option>
+            </select>
+          </div>
+
+          ${O.cb ? `<p class="k">Scheduled callback: <b>${callbackValue(O)}</b></p>` : ''}
+          <div class="k" style="font-weight:700">Timeline History</div>
+          <div class="tl">
+            ${O.at.map(a => `
+              <div><b>${e(a.out)}</b> · ${e(a.by)} · ${T(a.t)}${a.note ? ' — ' + e(a.note) : ''}</div>
+            `).join('') || '<div class="k">No attempts yet</div>'}
+          </div>
+
+          ${O.call === 'Cancelled' ? `
+            <p>${pill('Cancelled', 'r')} ${e(O.reason || 'No reason recorded')}</p>
+            <button class="btn p" onclick="reopen()">Reopen order</button>
+          ` : `
+            <textarea id="note" rows=2 style="width:100%" placeholder="Call notes / customer response"></textarea>
+            <div class="row2">
+              <button class="btn p" onclick="act('Confirmed')">Confirmed</button>
+              ${['Cancelled', 'No Answer', 'Call Back Later', 'Wrong Number'].map(x => `
+                <button class="btn" onclick="act('${x}')">${x}</button>
+              `).join('')}
+            </div>
+          `}
+        `;
+      })() : `
+        <div style="text-align:center;padding:50px 20px" class="k">
+          <h3>👈 Select an order from the list</h3>
+          <p>Click on any order to view its timeline, customer address, or assign it individually.</p>
+        </div>
+      `}
+    </div>
+  </div>`;
 };
 
 function act(out){
